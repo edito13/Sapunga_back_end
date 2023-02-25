@@ -29,7 +29,7 @@ const RegistUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             confirmPassword === "")
             throw "Há campos vazios, preencha-os!";
         else if (confirmPassword !== password)
-            throw "As senhas são diferentes!";
+            throw "As senhas são diferentes";
         // If it´s all ok
         const salt = yield bcrypt_1.default.genSalt(12);
         const passwordCrypted = yield bcrypt_1.default.hash(password, salt);
@@ -38,10 +38,10 @@ const RegistUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             email,
             password: passwordCrypted,
         });
-        res.json({ userRegisted, msg: "Usuário criado com sucesso" });
+        res.send({ status: 200, user: userRegisted });
     }
     catch (error) {
-        res.status(500).send("Erro: " + error);
+        res.send({ status: 500, erro: error });
     }
 });
 exports.RegistUser = RegistUser;
@@ -49,10 +49,10 @@ exports.RegistUser = RegistUser;
 const SelectAllUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = yield user_model_1.default.find({});
-        res.json(users);
+        res.send(users);
     }
     catch (error) {
-        res.status(500).send("Erro: " + error);
+        res.send({ status: 500, erro: error });
     }
 });
 exports.SelectAllUser = SelectAllUser;
@@ -61,10 +61,12 @@ const SelectUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const { id } = req.params;
     try {
         const user = yield user_model_1.default.findById(id, "-password");
-        res.json(user);
+        if (!user)
+            throw 'Usuário não encontrado!';
+        res.send({ status: 200, user });
     }
     catch (error) {
-        res.status(500).send("Erro: " + error);
+        res.send({ status: 500, erro: error });
     }
 });
 exports.SelectUser = SelectUser;
@@ -72,16 +74,19 @@ exports.SelectUser = SelectUser;
 const DeleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.body;
     try {
-        const user = yield user_model_1.default.findOneAndRemove({ id });
-        res.json(user);
+        const user = yield user_model_1.default.findByIdAndRemove(id);
+        if (!user)
+            throw 'Usuário não encontrado';
+        res.send({ status: 200, user });
     }
     catch (error) {
-        res.status(500).send("Erro: " + error);
+        res.send({ status: 500, erro: error });
     }
 });
 exports.DeleteUser = DeleteUser;
 // Update new datas of a specific user
-const UpdateUser = (req, res) => { };
+const UpdateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+});
 exports.UpdateUser = UpdateUser;
 // Check if user exist on the database
 const CheckLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -97,10 +102,10 @@ const CheckLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             throw "Sua senha está incorreta, tente novamente.";
         const secret = process.env.SECRET;
         const token = jsonwebtoken_1.default.sign({ id: user._id }, secret);
-        res.json({ msg: "Login feito com sucesso", token });
+        res.send({ status: 200, user, token });
     }
     catch (error) {
-        res.status(500).send("Erro: " + error);
+        res.send({ status: 500, erro: error });
     }
 });
 exports.CheckLogin = CheckLogin;
