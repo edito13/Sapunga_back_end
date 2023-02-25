@@ -1,8 +1,8 @@
+import { Request, Response, NextFunction } from "express";
 import Jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { expressFunction } from "../types";
-import { Request, Response, NextFunction } from "express";
 import UserModel from "../models/user.model";
+import { expressFunction } from "../types";
 
 // Create a new user
 export const RegistUser: expressFunction = async (req, res) => {
@@ -19,7 +19,7 @@ export const RegistUser: expressFunction = async (req, res) => {
       confirmPassword === ""
     )
       throw "Há campos vazios, preencha-os!";
-    else if (confirmPassword !== password) throw "As senhas são diferentes!";
+    else if (confirmPassword !== password) throw "As senhas são diferentes";
 
     // If it´s all ok
 
@@ -31,7 +31,7 @@ export const RegistUser: expressFunction = async (req, res) => {
       password: passwordCrypted,
     });
 
-    res.json({ userRegisted, msg: "Usuário criado com sucesso" });
+    res.json(userRegisted);
   } catch (error) {
     res.status(500).send("Erro: " + error);
   }
@@ -53,6 +53,7 @@ export const SelectUser: expressFunction = async (req, res) => {
 
   try {
     const user = await UserModel.findById(id, "-password");
+    if(!user) throw 'Usuário não encontrado!'
     res.json(user);
   } catch (error) {
     res.status(500).send("Erro: " + error);
@@ -64,7 +65,8 @@ export const DeleteUser: expressFunction = async (req, res) => {
   const { id } = req.body;
 
   try {
-    const user = await UserModel.findOneAndRemove({ id });
+    const user = await UserModel.findByIdAndRemove(id);
+    if(!user) throw 'Usuário não encontrado'
     res.json(user);
   } catch (error) {
     res.status(500).send("Erro: " + error);
@@ -72,7 +74,9 @@ export const DeleteUser: expressFunction = async (req, res) => {
 };
 
 // Update new datas of a specific user
-export const UpdateUser: expressFunction = (req, res) => {};
+export const UpdateUser: expressFunction = async (req, res) => {
+  
+};
 
 // Check if user exist on the database
 export const CheckLogin: expressFunction = async (req, res) => {
@@ -92,7 +96,7 @@ export const CheckLogin: expressFunction = async (req, res) => {
 
     const token = Jwt.sign({ id: user._id }, secret);
 
-    res.json({ msg: "Login feito com sucesso", token });
+    res.json({ user, token });
   } catch (error) {
     res.status(500).send("Erro: " + error);
   }
