@@ -31,9 +31,9 @@ export const RegistUser: expressFunction = async (req, res) => {
       password: passwordCrypted,
     });
 
-    res.json(userRegisted);
+    res.send({status: 200, user: userRegisted});
   } catch (error) {
-    res.status(500).send("Erro: " + error);
+    res.send({status: 500, erro: error});
   }
 };
 
@@ -41,9 +41,9 @@ export const RegistUser: expressFunction = async (req, res) => {
 export const SelectAllUser: expressFunction = async (req, res) => {
   try {
     const users = await UserModel.find({});
-    res.json(users);
+    res.send(users);
   } catch (error) {
-    res.status(500).send("Erro: " + error);
+    res.send({status: 500, erro: error});
   }
 };
 
@@ -54,9 +54,9 @@ export const SelectUser: expressFunction = async (req, res) => {
   try {
     const user = await UserModel.findById(id, "-password");
     if(!user) throw 'Usuário não encontrado!'
-    res.json(user);
+    res.send({status: 200, user});
   } catch (error) {
-    res.status(500).send("Erro: " + error);
+    res.send({status: 500, erro: error});
   }
 };
 
@@ -67,9 +67,9 @@ export const DeleteUser: expressFunction = async (req, res) => {
   try {
     const user = await UserModel.findByIdAndRemove(id);
     if(!user) throw 'Usuário não encontrado'
-    res.json(user);
+    res.send({ status: 200, user });
   } catch (error) {
-    res.status(500).send("Erro: " + error);
+    res.send({status: 500, erro: error});
   }
 };
 
@@ -96,9 +96,9 @@ export const CheckLogin: expressFunction = async (req, res) => {
 
     const token = Jwt.sign({ id: user._id }, secret);
 
-    res.json({ user, token });
+    res.send({ status: 200, user, token });
   } catch (error) {
-    res.status(500).send("Erro: " + error);
+    res.send({status: 500, erro: error});
   }
 };
 
