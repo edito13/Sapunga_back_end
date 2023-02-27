@@ -15,6 +15,7 @@ import {
 import ConnectToDatabase from "../database/conection";
 import multer from "multer";
 import { storage } from "../assets/multerConfig";
+import { cadastrar_produto, selecionar_produtos } from "../controllers/products.controller";
 
 const app = express();
 const route = Router();
@@ -31,9 +32,9 @@ ConnectToDatabase();
 
 const uploads = multer({ storage })
 
-route.get("/selecionarUsuarios", SelectAllUser);
+route.get("/selecionar_usuarios", SelectAllUser);
 
-route.get("/selecionarUsuario/:id", CheckingToken, SelectUser);
+route.get("/selecionar_usuario/:id", CheckingToken, SelectUser);
 
 route.delete("/deletar_usuario", DeleteUser);
 
@@ -44,6 +45,9 @@ route.post("/cadastrar_usuario", RegistUser);
 route.post('/uploads', uploads.single('file'), (req, res) => {
   res.send(req.file?.filename)
 })
+
+route.post('/cadastrar_produto', uploads.single('file'), cadastrar_produto)
+route.get('/selecionar_produtos', selecionar_produtos)
 
 app.use(route);
 
