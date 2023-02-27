@@ -13,6 +13,8 @@ import {
 
 // Importing Database Conection
 import ConnectToDatabase from "../database/conection";
+import multer from "multer";
+import { storage } from "../assets/multerConfig";
 
 const app = express();
 const route = Router();
@@ -22,9 +24,12 @@ const port = 8000;
 app.use(express.json());
 
 app.use(cors());
+app.use('/images', express.static('uploads'))
 
 // Connect to database
 ConnectToDatabase();
+
+const uploads = multer({ storage })
 
 route.get("/selecionarUsuarios", SelectAllUser);
 
@@ -35,6 +40,10 @@ route.delete("/deletar_usuario", DeleteUser);
 route.post("/verificar_login", CheckLogin);
 
 route.post("/cadastrar_usuario", RegistUser);
+
+route.post('/uploads', uploads.single('file'), (req, res) => {
+  res.send(req.file?.filename)
+})
 
 app.use(route);
 
