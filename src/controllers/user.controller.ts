@@ -4,6 +4,10 @@ import bcrypt from "bcrypt";
 import UserModel from "../models/user.model";
 import { expressFunction } from "../types";
 
+interface JwtPayload {
+  id: string;
+}
+
 // Create a new user
 export const RegistUser: expressFunction = async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
@@ -31,9 +35,9 @@ export const RegistUser: expressFunction = async (req, res) => {
       password: passwordCrypted,
     });
 
-    res.send({status: 200, user: userRegisted});
+    res.json({ user: userRegisted });
   } catch (error) {
-    res.send({status: 500, erro: error});
+    res.status(401).send("Erro: " + error);
   }
 };
 
@@ -41,9 +45,9 @@ export const RegistUser: expressFunction = async (req, res) => {
 export const SelectAllUser: expressFunction = async (req, res) => {
   try {
     const users = await UserModel.find({});
-    res.send(users);
+    res.json(users);
   } catch (error) {
-    res.send({status: 500, erro: error});
+    res.status(409).send("Erro" + error);
   }
 };
 
@@ -53,10 +57,10 @@ export const SelectUser: expressFunction = async (req, res) => {
 
   try {
     const user = await UserModel.findById(id, "-password");
-    if(!user) throw 'Usuário não encontrado!'
-    res.send({status: 200, user});
+    if (!user) throw "Usuário não encontrado!";
+    res.json(user);
   } catch (error) {
-    res.send({status: 500, erro: error});
+    res.status(401).send("Erro: " + error);
   }
 };
 
@@ -66,17 +70,15 @@ export const DeleteUser: expressFunction = async (req, res) => {
 
   try {
     const user = await UserModel.findByIdAndRemove(id);
-    if(!user) throw 'Usuário não encontrado'
-    res.send({ status: 200, user });
+    if (!user) throw "Usuário não encontrado";
+    res.json(user);
   } catch (error) {
-    res.send({status: 500, erro: error});
+    res.status(401).send("Erro" + error);
   }
 };
 
 // Update new datas of a specific user
-export const UpdateUser: expressFunction = async (req, res) => {
-  
-};
+export const UpdateUser: expressFunction = async (req, res) => {};
 
 // Check if user exist on the database
 export const CheckLogin: expressFunction = async (req, res) => {
@@ -96,21 +98,32 @@ export const CheckLogin: expressFunction = async (req, res) => {
 
     const token = Jwt.sign({ id: user._id }, secret);
 
-    res.send({ status: 200, user, token });
+    res.json({ user, token });
   } catch (error) {
-    res.send({status: 500, erro: error});
+    res.status(409).send("Erro: " + error);
   }
 };
 
-export const CheckingToken = (
+export const CheckingToken = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
 
-  if (!token) res.status(500).send("Acesso negado!");
+  try {
+    if (!authHeader) throw "Token não enviado!";
 
-  next();
+    const token = authHeader && authHeader.split(" ")[1];
+    const secret = process.env.SECRET as string;
+
+    const { id } = Jwt.verify(token as string, secret) as JwtPayload;
+    const user = await UserModel.findById(id, "-password");
+
+    if (!user) throw "Token Inválido!";
+
+    next();
+  } catch (error) {
+    res.status(401).send("Erro: " + error);
+  }
 };

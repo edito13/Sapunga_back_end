@@ -24,27 +24,27 @@ const cadastrar_produto = (req, res) => __awaiter(void 0, void 0, void 0, functi
         else if (!descricao)
             throw "A descrição está incorreta";
         else if (!preco)
-            "O preço está incorreto";
+            throw "O preço está incorreto";
         const product = yield products_model_1.default.create({
             urlPhoto,
             name,
             preco,
             descricao,
         });
-        res.send(product);
+        res.json(product);
     }
     catch (error) {
-        res.send({ status: 500, erro: error });
+        res.status(405).send({ status: 500, erro: error });
     }
 });
 exports.cadastrar_produto = cadastrar_produto;
 const selecionar_produtos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const products = yield products_model_1.default.find({});
-        res.send(products);
+        res.json(products);
     }
     catch (error) {
-        res.send({ status: 500, erro: error });
+        res.status(404).send("Erro: " + error);
     }
 });
 exports.selecionar_produtos = selecionar_produtos;

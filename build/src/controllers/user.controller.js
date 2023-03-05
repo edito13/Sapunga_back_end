@@ -38,10 +38,10 @@ const RegistUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             email,
             password: passwordCrypted,
         });
-        res.send({ status: 200, user: userRegisted });
+        res.json({ user: userRegisted });
     }
     catch (error) {
-        res.send({ status: 500, erro: error });
+        res.status(401).send("Erro: " + error);
     }
 });
 exports.RegistUser = RegistUser;
@@ -49,10 +49,10 @@ exports.RegistUser = RegistUser;
 const SelectAllUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = yield user_model_1.default.find({});
-        res.send(users);
+        res.json(users);
     }
     catch (error) {
-        res.send({ status: 500, erro: error });
+        res.status(409).send("Erro" + error);
     }
 });
 exports.SelectAllUser = SelectAllUser;
@@ -62,11 +62,11 @@ const SelectUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const user = yield user_model_1.default.findById(id, "-password");
         if (!user)
-            throw 'Usuário não encontrado!';
-        res.send({ status: 200, user });
+            throw "Usuário não encontrado!";
+        res.json(user);
     }
     catch (error) {
-        res.send({ status: 500, erro: error });
+        res.status(401).send("Erro: " + error);
     }
 });
 exports.SelectUser = SelectUser;
@@ -76,17 +76,16 @@ const DeleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const user = yield user_model_1.default.findByIdAndRemove(id);
         if (!user)
-            throw 'Usuário não encontrado';
-        res.send({ status: 200, user });
+            throw "Usuário não encontrado";
+        res.json(user);
     }
     catch (error) {
-        res.send({ status: 500, erro: error });
+        res.status(401).send("Erro" + error);
     }
 });
 exports.DeleteUser = DeleteUser;
 // Update new datas of a specific user
-const UpdateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-});
+const UpdateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () { });
 exports.UpdateUser = UpdateUser;
 // Check if user exist on the database
 const CheckLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -102,18 +101,28 @@ const CheckLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             throw "Sua senha está incorreta, tente novamente.";
         const secret = process.env.SECRET;
         const token = jsonwebtoken_1.default.sign({ id: user._id }, secret);
-        res.send({ status: 200, user, token });
+        res.json({ user, token });
     }
     catch (error) {
-        res.send({ status: 500, erro: error });
+        res.status(409).send("Erro: " + error);
     }
 });
 exports.CheckLogin = CheckLogin;
-const CheckingToken = (req, res, next) => {
+const CheckingToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-    if (!token)
-        res.status(500).send("Acesso negado!");
-    next();
-};
+    try {
+        if (!authHeader)
+            throw "Token não enviado!";
+        const token = authHeader && authHeader.split(" ")[1];
+        const secret = process.env.SECRET;
+        const { id } = jsonwebtoken_1.default.verify(token, secret);
+        const user = yield user_model_1.default.findById(id, "-password");
+        if (!user)
+            throw "Token Inválido!";
+        next();
+    }
+    catch (error) {
+        res.status(401).send("Erro: " + error);
+    }
+});
 exports.CheckingToken = CheckingToken;

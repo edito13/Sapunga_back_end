@@ -8,7 +8,7 @@ export const cadastrar_produto: expressFunction = async (req, res) => {
   try {
     if (!name) throw "O nome está incorreto";
     else if (!descricao) throw "A descrição está incorreta";
-    else if (!preco) "O preço está incorreto";
+    else if (!preco) throw "O preço está incorreto";
 
     const product = await ProductModel.create({
       urlPhoto,
@@ -16,17 +16,17 @@ export const cadastrar_produto: expressFunction = async (req, res) => {
       preco,
       descricao,
     });
-    res.send(product);
+    res.json(product);
   } catch (error) {
-    res.send({ status: 500, erro: error });
+    res.status(405).send({ status: 500, erro: error });
   }
 };
 
 export const selecionar_produtos: expressFunction = async (req, res) => {
   try {
     const products = await ProductModel.find({});
-    res.send(products);
+    res.json(products);
   } catch (error) {
-    res.send({ status: 500, erro: error });
+    res.status(404).send("Erro: " + error);
   }
 };
