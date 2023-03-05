@@ -14,7 +14,7 @@ import {
 // Importing Database Conection
 import ConnectToDatabase from "../database/conection";
 import multer from "multer";
-import { MulterConfig } from "../assets/multerConfig";
+import { storage } from "../assets/multerConfig";
 import {
   cadastrar_produto,
   selecionar_produtos,
@@ -33,7 +33,7 @@ app.use("/images", express.static("uploads"));
 // Connect to database
 ConnectToDatabase();
 
-const uploads = multer(MulterConfig);
+const uploads = multer({ storage });
 
 route.get("/selecionar_usuarios", SelectAllUser);
 
