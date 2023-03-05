@@ -31,10 +31,10 @@ const cadastrar_produto = (req, res) => __awaiter(void 0, void 0, void 0, functi
             preco,
             descricao,
         });
-        res.json(product);
+        res.status(201).json(product);
     }
     catch (error) {
-        res.status(405).send({ status: 500, erro: error });
+        res.status(405).send("Erro" + error);
     }
 });
 exports.cadastrar_produto = cadastrar_produto;

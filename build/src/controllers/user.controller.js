@@ -38,7 +38,7 @@ const RegistUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             email,
             password: passwordCrypted,
         });
-        res.json({ user: userRegisted });
+        res.status(201).json({ user: userRegisted });
     }
     catch (error) {
         res.status(401).send("Erro: " + error);

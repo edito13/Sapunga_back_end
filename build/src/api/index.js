@@ -41,20 +41,20 @@ const port = 8000;
 // Let JSON for the request
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
-app.use('/images', express_1.default.static('uploads'));
+app.use("/images", express_1.default.static("uploads"));
 // Connect to database
 (0, conection_1.default)();
-const uploads = (0, multer_1.default)({ storage: multerConfig_1.storage });
+const uploads = (0, multer_1.default)(multerConfig_1.MulterConfig);
 route.get("/selecionar_usuarios", user_controller_1.SelectAllUser);
 route.get("/selecionar_usuario/:id", user_controller_1.CheckingToken, user_controller_1.SelectUser);
 route.delete("/deletar_usuario", user_controller_1.DeleteUser);
 route.post("/verificar_login", user_controller_1.CheckLogin);
 route.post("/cadastrar_usuario", user_controller_1.RegistUser);
-route.post('/uploads', uploads.single('file'), (req, res) => {
+route.post("/uploads", uploads.single("file"), (req, res) => {
     var _a;
     res.send((_a = req.file) === null || _a === void 0 ? void 0 : _a.filename);
 });
-route.post('/cadastrar_produto', uploads.single('file'), products_controller_1.cadastrar_produto);
-route.get('/selecionar_produtos', products_controller_1.selecionar_produtos);
+route.post("/cadastrar_produto", uploads.single("file"), products_controller_1.cadastrar_produto);
+route.get("/selecionar_produtos", products_controller_1.selecionar_produtos);
 app.use(route);
 app.listen(port, () => console.log("O servidor está ligado"));
