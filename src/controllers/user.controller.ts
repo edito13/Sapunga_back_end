@@ -35,7 +35,7 @@ export const RegistUser: expressFunction = async (req, res) => {
       password: passwordCrypted,
     });
 
-    res.json({ user: userRegisted });
+    res.status(201).json({ user: userRegisted });
   } catch (error) {
     res.status(401).send("Erro: " + error);
   }

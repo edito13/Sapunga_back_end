@@ -16,9 +16,9 @@ export const cadastrar_produto: expressFunction = async (req, res) => {
       preco,
       descricao,
     });
-    res.json(product);
+    res.status(201).json(product);
   } catch (error) {
-    res.status(405).send({ status: 500, erro: error });
+    res.status(405).send("Erro" + error);
   }
 };
 

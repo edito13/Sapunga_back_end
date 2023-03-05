@@ -1,13 +1,16 @@
-import multer from 'multer'
-import path from 'path'
+import multer, { Options } from "multer";
+import { resolve } from "path";
 
-export const  storage = multer.diskStorage({
+export const MulterConfig = {
+  dest: resolve(__dirname, "..", "..", "uploads"),
+  storage: multer.diskStorage({
     destination: (req, file, calback) => {
-        calback(null, path.resolve('uploads'))
+      calback(null, resolve(__dirname, "..", "..", "uploads"));
     },
     filename: (req, file, calback) => {
-        const time = new Date().getTime()
+      const time = new Date().getTime();
 
-        calback(null, `${time}_${file.originalname}`)
-    }
-})
+      calback(null, `${time}_${file.originalname}`);
+    },
+  }),
+} as Options;
