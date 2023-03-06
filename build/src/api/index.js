@@ -44,7 +44,7 @@ app.use((0, cors_1.default)());
 app.use("/images", express_1.default.static("uploads"));
 // Connect to database
 (0, conection_1.default)();
-const uploads = (0, multer_1.default)(multerConfig_1.MulterConfig);
+const uploads = (0, multer_1.default)({ storage: multerConfig_1.storage });
 route.get("/selecionar_usuarios", user_controller_1.SelectAllUser);
 route.get("/selecionar_usuario/:id", user_controller_1.CheckingToken, user_controller_1.SelectUser);
 route.delete("/deletar_usuario", user_controller_1.DeleteUser);
