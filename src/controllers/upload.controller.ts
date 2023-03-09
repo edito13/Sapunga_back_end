@@ -16,6 +16,7 @@ export async function uploadFile(
   const waysToUpload: Record<NodeEnvironment, UploadProvider> = {
     development: localUpload,
     production: firebaseUpload,
+    // development: firebaseUpload,
   };
 
   const UploadEntity = waysToUpload[env || "development"];
