@@ -20,7 +20,5 @@ export async function uploadFile(
 
   const UploadEntity = waysToUpload[env || "development"];
 
-  const response = await UploadEntity.handle(req, res, next);
-
-  return res.send(response);
+  UploadEntity.handle(req, res, next);
 }
