@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import cors from "cors";
- 
+
 // Importing Controllers Functions
 import {
   CheckingToken,
@@ -22,7 +22,7 @@ import {
 
 const app = express();
 const route = Router();
-const port = 8000;
+const PORT = 3000;
 
 // Let JSON for the request
 app.use(express.json());
@@ -54,4 +54,6 @@ route.get("/selecionar_produtos", selecionar_produtos);
 
 app.use(route);
 
-app.listen(port, () => console.log("O servidor está ligado"));
+app.listen(process.env.PORT || PORT, () =>
+  console.log(`Servidor rodando na porta ${PORT}`)
+);
