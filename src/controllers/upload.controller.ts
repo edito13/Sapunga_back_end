@@ -14,9 +14,7 @@ export function uploadFile(req: Request, res: Response, next: NextFunction) {
     production: firebaseUpload,
   };
 
-  const UploadEntity = waysToUpload[env];
+  const UploadEntity = waysToUpload[env || "development"];
 
-  if (UploadEntity) {
-    UploadEntity.handle(req, res, next);
-  }
+  UploadEntity.handle(req, res, next);
 }
