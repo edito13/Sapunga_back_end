@@ -4,7 +4,11 @@ import { UploadProvider } from "../services/interfaces/UploadProvider";
 import { LocalUploadService } from "../services/LocalUploadService";
 import { NodeEnvironment } from "../types";
 
-export function uploadFile(req: Request, res: Response, next: NextFunction) {
+export async function uploadFile(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const localUpload = new LocalUploadService();
   const firebaseUpload = new FirebaseUploadService();
   const env = process.env.NODE_ENV as NodeEnvironment;
@@ -16,5 +20,7 @@ export function uploadFile(req: Request, res: Response, next: NextFunction) {
 
   const UploadEntity = waysToUpload[env || "development"];
 
-  UploadEntity.handle(req, res, next);
+  const response = await UploadEntity.handle(req, res, next);
+
+  return res.send(response);
 }
