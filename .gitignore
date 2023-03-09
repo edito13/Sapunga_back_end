@@ -1,5 +1,6 @@
 uploads/*
 build
+thunder-tests
 
 # Logs
 logs

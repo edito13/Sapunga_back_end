@@ -1,13 +1,17 @@
 import multer from "multer";
-import { resolve } from "path";
 
-export const storage = multer.diskStorage({
-  destination: (req, file, calback) => {
-    calback(null, resolve("uploads"));
-  },
-  filename: (req, file, calback) => {
-    const time = new Date().getTime();
+// const storage = multer.diskStorage({
+//   destination: (req, file, calback) => {
+//     calback(null, resolve("uploads"));
+//   },
+//   filename: (req, file, calback) => {
+//     const time = new Date().getTime();
 
-    calback(null, `${time}_${file.originalname}`);
-  },
-});
+//     calback(null, `${time}_${file.originalname}`);
+//   },
+// });
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+export { upload };
