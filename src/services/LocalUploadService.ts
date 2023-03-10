@@ -31,11 +31,15 @@ export class LocalUploadService implements UploadProvider {
       await writeFile(fileUrl, req.file.buffer);
 
       return res.send({
-        url: "/uploads/" + filename,
+        url: this.getFullAddress(filename),
         status: "success",
       });
     } catch (e: any) {
       return res.status(400).send({ status: "error", message: e.message });
     }
+  }
+  getFullAddress(filename: string) {
+    // the server address must be before that
+    return `/uploads/${filename}`;
   }
 }

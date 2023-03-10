@@ -6,4 +6,5 @@ export interface UploadProvider {
     res: Response,
     next: NextFunction
   ) => Promise<Response>;
+  getFullAddress: (filename: string) => string;
 }
