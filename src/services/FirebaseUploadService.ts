@@ -30,14 +30,13 @@ export class FirebaseUploadService implements UploadProvider {
         metadata
       );
 
-      uploadBytes(storageRef, req.file.buffer).then((snapshot) => {
-        console.log("Uploaded a blob or file!");
-      });
+      await uploadBytes(storageRef, req.file.buffer);
 
       const downloadURL = await getDownloadURL(snapshot.ref);
 
       return res.send({
-        url: this.getFullAddress(filename),
+        // url: this.getFullAddress(filename),
+        filename,
         downloadURL,
         // storageRef,
       });
