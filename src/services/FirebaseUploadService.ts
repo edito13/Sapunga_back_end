@@ -9,7 +9,7 @@ import {
 } from "firebase/storage";
 import { UploadProvider } from "./interfaces/UploadProvider";
 import { v4 } from "uuid";
-import { storage } from "../config/firebase-setup";
+import { storage, firebaseApp } from "../config/firebase-setup";
 
 export class FirebaseUploadService implements UploadProvider {
   async handle(req: Request, res: Response, next: NextFunction) {
@@ -17,9 +17,9 @@ export class FirebaseUploadService implements UploadProvider {
       if (!req.file) throw new Error("No file found.");
 
       const extname = path.extname(req.file.originalname);
-      const filename = `${v4()}.${extname}`;
+      const filename = `${v4()}${extname}`;
 
-      const storageRef = StorageRef(storage, `uploads/${filename}`);
+      const storageRef = StorageRef(storage, filename);
       const metadata: UploadMetadata = {
         contentType: req.file.mimetype,
       };
@@ -34,13 +34,23 @@ export class FirebaseUploadService implements UploadProvider {
         console.log("Uploaded a blob or file!");
       });
 
-      const downloadedURL = await getDownloadURL(snapshot.ref);
+      const downloadURL = await getDownloadURL(snapshot.ref);
 
       return res.send({
-        downloadedURL,
+        url: this.getFullAddress(filename),
+        downloadURL,
+        // storageRef,
       });
     } catch (e: any) {
       return res.status(400).send({ status: "error", message: e.message });
     }
+  }
+
+  getFullAddress(filename: string) {
+    const {
+      options: { storageBucket },
+    } = firebaseApp;
+    // return `https://storage.googleapis.com/${storageBucket}/${filename}?alt=media`;
+    return `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/${filename}?alt=media`;
   }
 }
