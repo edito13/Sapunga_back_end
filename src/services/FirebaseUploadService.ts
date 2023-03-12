@@ -37,7 +37,7 @@ export class FirebaseUploadService implements UploadProvider {
       return res.send({
         // url: this.getFullAddress(filename),
         filename,
-        url: downloadURL.split("?")[0],
+        url: downloadURL,
         // storageRef,
       });
     } catch (e: any) {

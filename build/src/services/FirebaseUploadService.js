@@ -35,7 +35,7 @@ class FirebaseUploadService {
                 return res.send({
                     // url: this.getFullAddress(filename),
                     filename,
-                    url: downloadURL.split("?")[0],
+                    url: downloadURL,
                     // storageRef,
                 });
             }
