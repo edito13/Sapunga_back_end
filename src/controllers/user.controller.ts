@@ -50,7 +50,7 @@ router.get("/selectOne/:id", auth, async (req, res) => {
   }
 });
 
-router.delete("/deleteUser", async (req, res) => {
+router.delete("/delete", async (req, res) => {
   const { id } = req.body;
 
   try {
@@ -85,6 +85,6 @@ router.post("/checkLogin", async (req, res) => {
 });
 
 // Update new datas of a specific user
-router.put("UpdateUser", async (req, res) => {});
+router.put("Update", async (req, res) => {});
 
 module.exports = (app: any) => app.use("/user", router);

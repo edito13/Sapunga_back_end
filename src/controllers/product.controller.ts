@@ -2,6 +2,7 @@ import { Router } from "express";
 import Product from "../models/product.model";
 
 const router = Router();
+
 router.post("/regist", async (req, res) => {
   const { name, descricao, preco, file } = req.body;
   const urlPhoto = file;
