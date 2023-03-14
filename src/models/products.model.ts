@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const productSchema = new mongoose.Schema({
   urlPhoto: {
     type: String,
-    require: true
+    require: true,
   },
   name: {
     type: String,
@@ -17,8 +17,12 @@ const productSchema = new mongoose.Schema({
     type: Number,
     require: true,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
-const ProductModel = mongoose.model("Products", productSchema);
+const Product = mongoose.model("Products", productSchema);
 
-export default ProductModel;
+export default Product;

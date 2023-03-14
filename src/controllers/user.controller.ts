@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import Jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import UserModel from "../models/user.model";
+import User from "../models/user.model";
 import { expressFunction } from "../types";
 
 interface JwtPayload {
@@ -12,7 +12,7 @@ interface JwtPayload {
 export const RegistUser: expressFunction = async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
 
-  const user = await UserModel.findOne({ email });
+  const user = await User.findOne({ email });
 
   try {
     if (user) throw "Já existe um usuário com este e-mail";
@@ -29,7 +29,7 @@ export const RegistUser: expressFunction = async (req, res) => {
 
     const salt = await bcrypt.genSalt(12);
     const passwordCrypted = await bcrypt.hash(password, salt);
-    const userRegisted = await UserModel.create({
+    const userRegisted = await User.create({
       name,
       email,
       password: passwordCrypted,
@@ -37,17 +37,17 @@ export const RegistUser: expressFunction = async (req, res) => {
 
     res.status(201).json({ user: userRegisted });
   } catch (error) {
-    res.status(401).send("Erro: " + error);
+    res.status(401).send({ error });
   }
 };
 
 // Get all users
 export const SelectAllUser: expressFunction = async (req, res) => {
   try {
-    const users = await UserModel.find({});
+    const users = await User.find({});
     res.json(users);
   } catch (error) {
-    res.status(409).send("Erro" + error);
+    res.status(400).send({ error });
   }
 };
 
@@ -56,11 +56,11 @@ export const SelectUser: expressFunction = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const user = await UserModel.findById(id, "-password");
+    const user = await User.findById(id, "-password");
     if (!user) throw "Usuário não encontrado!";
     res.json(user);
   } catch (error) {
-    res.status(401).send("Erro: " + error);
+    res.status(401).send({ error });
   }
 };
 
@@ -69,11 +69,11 @@ export const DeleteUser: expressFunction = async (req, res) => {
   const { id } = req.body;
 
   try {
-    const user = await UserModel.findByIdAndRemove(id);
+    const user = await User.findByIdAndRemove(id);
     if (!user) throw "Usuário não encontrado";
     res.json(user);
   } catch (error) {
-    res.status(401).send("Erro" + error);
+    res.status(401).send({ error });
   }
 };
 
@@ -84,7 +84,7 @@ export const UpdateUser: expressFunction = async (req, res) => {};
 export const CheckLogin: expressFunction = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await UserModel.findOne({ email });
+  const user = await User.findOne({ email });
 
   try {
     if (!user) throw "Este email não está cadastrado";
@@ -100,7 +100,7 @@ export const CheckLogin: expressFunction = async (req, res) => {
 
     res.json({ user, token });
   } catch (error) {
-    res.status(409).send("Erro: " + error);
+    res.send({ error: error as string });
   }
 };
 
@@ -118,12 +118,12 @@ export const CheckingToken = async (
     const secret = process.env.SECRET as string;
 
     const { id } = Jwt.verify(token as string, secret) as JwtPayload;
-    const user = await UserModel.findById(id, "-password");
+    const user = await User.findById(id, "-password");
 
     if (!user) throw "Token Inválido!";
 
     next();
   } catch (error) {
-    res.status(401).send("Erro: " + error);
+    res.status(401).send({ error });
   }
 };

@@ -16,7 +16,7 @@ import ConnectToDatabase from "../database/conection";
 import { upload } from "../assets/multerConfig";
 import {
   cadastrar_produto,
-  selecionar_produtos,
+  selecionar_products,
 } from "../controllers/products.controller";
 import { uploadFile } from "../controllers/upload.controller";
 
@@ -49,7 +49,7 @@ route.post("/cadastrar_usuario", RegistUser);
 route.post("/uploads", uploadFile);
 
 route.post("/cadastrar_produto", cadastrar_produto);
-route.get("/selecionar_produtos", selecionar_produtos);
+route.get("/selecionar_produtos", selecionar_products);
 
 app.use(route);
 

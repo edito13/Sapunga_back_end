@@ -30,16 +30,15 @@ export class LocalUploadService implements UploadProvider {
     try {
       await writeFile(fileUrl, req.file.buffer);
 
-      return res.send({
+      return res.json({
         url: this.getFullAddress(filename),
-        status: "success",
       });
-    } catch (e: any) {
-      return res.status(400).send({ status: "error", message: e.message });
+    } catch (error) {
+      return res.status(400).send({ error });
     }
   }
   getFullAddress(filename: string) {
     // the server address must be before that
-    return `/uploads/${filename}`;
+    return `/Images/${filename}`;
   }
 }
