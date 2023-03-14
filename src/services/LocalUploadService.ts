@@ -39,6 +39,6 @@ export class LocalUploadService implements UploadProvider {
   }
   getFullAddress(filename: string) {
     // the server address must be before that
-    return `/Images/${filename}`;
+    return `/images/${filename}`;
   }
 }

@@ -1,7 +1,8 @@
+import { Router } from "express";
 import Product from "../models/products.model";
-import { expressFunction } from "../types";
 
-export const cadastrar_produto: expressFunction = async (req, res) => {
+const router = Router();
+router.post("/regist", async (req, res) => {
   const { name, descricao, preco, file } = req.body;
   const urlPhoto = file;
 
@@ -20,22 +21,26 @@ export const cadastrar_produto: expressFunction = async (req, res) => {
   } catch (error) {
     res.status(405).send({ error });
   }
-};
+});
 
-export const selecionar_products: expressFunction = async (req, res) => {
+router.get("/selectAll", async (req, res) => {
   try {
     const products = await Product.find({});
     res.json(products);
   } catch (error) {
     res.status(404).send({ error });
   }
-};
+});
 
-export const selecionar_product: expressFunction = async (req, res) => {
+router.get("/selectOne/:id", async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const products = await Product.find({});
+    const products = await Product.findById(id);
     res.json(products);
   } catch (error) {
     res.status(404).send({ error });
   }
-};
+});
+
+module.exports = (app: any) => app.use("/product", router);
