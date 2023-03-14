@@ -1,41 +1,13 @@
-import { Request, Response, NextFunction, Router } from "express";
+import express from "express";
 import Jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/user.model";
-import { expressFunction } from "../types";
+import auth from "../middleware/auth.middleware";
 
-interface JwtPayload {
-  id: string;
-}
-
-const CheckingToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const authHeader = req.headers["authorization"];
-
-  try {
-    if (!authHeader) throw "Token não enviado!";
-
-    const token = authHeader && authHeader.split(" ")[1];
-    const secret = process.env.SECRET as string;
-
-    const { id } = Jwt.verify(token as string, secret) as JwtPayload;
-    const user = await User.findById(id, "-password");
-
-    if (!user) throw "Token Inválido!";
-
-    next();
-  } catch (error) {
-    res.status(401).send({ error });
-  }
-};
-
-const router = Router();
+const router = express.Router();
 
 router.post("/regist", async (req, res) => {
-  const { name, email, password, confirmPassword } = req.body;
+  const { name, email, password } = req.body;
 
   const user = await User.findOne({ email });
 
@@ -66,7 +38,7 @@ router.get("/selectAll", async (req, res) => {
   }
 });
 
-router.get("/selectOne/:id", CheckingToken, async (req, res) => {
+router.get("/selectOne/:id", auth, async (req, res) => {
   const { id } = req.params;
 
   try {

@@ -1,4 +1,4 @@
-import express, { Router } from "express";
+import express from "express";
 import cors from "cors";
 
 // Importing Database Conection
@@ -7,7 +7,7 @@ import { upload } from "../assets/multerConfig";
 import { uploadFile } from "../controllers/upload.controller";
 
 const app = express();
-const route = Router();
+const route = express.Router();
 const PORT = 3000;
 
 // Let JSON for the request
@@ -26,6 +26,8 @@ route.post("/uploads", uploadFile);
 
 require("../controllers/user.controller")(app);
 require("../controllers/product.controller")(app);
+require("../controllers/category.controller")(app);
+require("../controllers/order.controller")(app);
 
 app.use(route);
 
