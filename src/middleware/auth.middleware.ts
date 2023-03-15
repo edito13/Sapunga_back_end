@@ -24,6 +24,8 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
 
     if (!user) throw "Token Inválido!";
 
+    req.userId = id;
+
     next();
   } catch (error) {
     res.status(401).send({ error });
