@@ -16,10 +16,10 @@ export class FirebaseUploadService implements UploadProvider {
     try {
       if (!req.file) throw new Error("No file found.");
 
-      const extname = path.extname(req.file.originalname);
-      const filename = `${v4()}${extname}`;
+      // const extname = path.extname(req.file.originalname);
+      const filename = `${v4()}${req.file.originalname}`;
 
-      const storageRef = StorageRef(storage, filename);
+      const storageRef = StorageRef(storage, `uploads/${filename}`);
       const metadata: UploadMetadata = {
         contentType: req.file.mimetype,
       };
@@ -32,14 +32,12 @@ export class FirebaseUploadService implements UploadProvider {
 
       await uploadBytes(storageRef, req.file.buffer);
 
-      const imageURL = getDownloadURL(snapshot.ref).then(
-        (urlImage: string) => urlImage
-      );
+      const imageURL = await getDownloadURL(snapshot.ref);
 
       return res.send({
         // url: this.getFullAddress(filename),
         filename,
-        url: imageURL,
+        url: imageURL.toString(),
         // storageRef,
       });
     } catch (e: any) {
