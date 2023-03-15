@@ -31,19 +31,18 @@ class LocalUploadService {
             const fileUrl = node_path_1.default.resolve(__dirname, "..", "..", UPLOAD_FOLDER, filename);
             try {
                 yield writeFile(fileUrl, req.file.buffer);
-                return res.send({
+                return res.json({
                     url: this.getFullAddress(filename),
-                    status: "success",
                 });
             }
-            catch (e) {
-                return res.status(400).send({ status: "error", message: e.message });
+            catch (error) {
+                return res.status(400).send({ error });
             }
         });
     }
     getFullAddress(filename) {
         // the server address must be before that
-        return `/uploads/${filename}`;
+        return `/images/${filename}`;
     }
 }
 exports.LocalUploadService = LocalUploadService;

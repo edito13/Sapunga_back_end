@@ -12,24 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CheckingToken = exports.CheckLogin = exports.UpdateUser = exports.DeleteUser = exports.SelectUser = exports.SelectAllUser = exports.RegistUser = void 0;
+const express_1 = __importDefault(require("express"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_model_1 = __importDefault(require("../models/user.model"));
-// Create a new user
-const RegistUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, email, password, confirmPassword } = req.body;
+const auth_middleware_1 = __importDefault(require("../middleware/auth.middleware"));
+const router = express_1.default.Router();
+router.post("/regist", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, email, password } = req.body;
     const user = yield user_model_1.default.findOne({ email });
     try {
         if (user)
             throw "Já existe um usuário com este e-mail";
-        else if (name === "" ||
-            email === "" ||
-            password === "" ||
-            confirmPassword === "")
-            throw "Há campos vazios, preencha-os!";
-        else if (confirmPassword !== password)
-            throw "As senhas são diferentes";
         // If it´s all ok
         const salt = yield bcrypt_1.default.genSalt(12);
         const passwordCrypted = yield bcrypt_1.default.hash(password, salt);
@@ -41,37 +35,31 @@ const RegistUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(201).json({ user: userRegisted });
     }
     catch (error) {
-        res.status(401).send("Erro: " + error);
+        res.status(401).send({ error });
     }
-});
-exports.RegistUser = RegistUser;
-// Get all users
-const SelectAllUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+}));
+router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = yield user_model_1.default.find({});
         res.json(users);
     }
     catch (error) {
-        res.status(409).send("Erro" + error);
+        res.status(400).send({ error });
     }
-});
-exports.SelectAllUser = SelectAllUser;
-// Get a specific user
-const SelectUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+}));
+router.get("/selectOne/:id", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
-        const user = yield user_model_1.default.findById(id, "-password");
+        const user = yield user_model_1.default.findById(id);
         if (!user)
             throw "Usuário não encontrado!";
         res.json(user);
     }
     catch (error) {
-        res.status(401).send("Erro: " + error);
+        res.status(401).send({ error });
     }
-});
-exports.SelectUser = SelectUser;
-// Delete a specific user
-const DeleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+}));
+router.delete("/delete", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.body;
     try {
         const user = yield user_model_1.default.findByIdAndRemove(id);
@@ -80,22 +68,15 @@ const DeleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.json(user);
     }
     catch (error) {
-        res.status(401).send("Erro" + error);
+        res.status(401).send({ error });
     }
-});
-exports.DeleteUser = DeleteUser;
-// Update new datas of a specific user
-const UpdateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () { });
-exports.UpdateUser = UpdateUser;
-// Check if user exist on the database
-const CheckLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+}));
+router.post("/checkLogin", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
-    const user = yield user_model_1.default.findOne({ email });
+    const user = yield user_model_1.default.findOne({ email }).select("+password");
     try {
         if (!user)
             throw "Este email não está cadastrado";
-        else if (!password)
-            throw "Precisa enviar uma senha";
         const checkPassword = yield bcrypt_1.default.compare(password, user.password);
         if (!checkPassword)
             throw "Sua senha está incorreta, tente novamente.";
@@ -104,25 +85,9 @@ const CheckLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.json({ user, token });
     }
     catch (error) {
-        res.status(409).send("Erro: " + error);
+        res.send({ error: error });
     }
-});
-exports.CheckLogin = CheckLogin;
-const CheckingToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const authHeader = req.headers["authorization"];
-    try {
-        if (!authHeader)
-            throw "Token não enviado!";
-        const token = authHeader && authHeader.split(" ")[1];
-        const secret = process.env.SECRET;
-        const { id } = jsonwebtoken_1.default.verify(token, secret);
-        const user = yield user_model_1.default.findById(id, "-password");
-        if (!user)
-            throw "Token Inválido!";
-        next();
-    }
-    catch (error) {
-        res.status(401).send("Erro: " + error);
-    }
-});
-exports.CheckingToken = CheckingToken;
+}));
+// Update new datas of a specific user
+router.put("Update", (req, res) => __awaiter(void 0, void 0, void 0, function* () { }));
+module.exports = (app) => app.use("/user", router);

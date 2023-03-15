@@ -12,12 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.selecionar_produtos = exports.cadastrar_produto = void 0;
-const products_model_1 = __importDefault(require("../models/products.model"));
-const cadastrar_produto = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const { name, descricao, preco } = req.body;
-    const urlPhoto = (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename;
+const express_1 = require("express");
+const product_model_1 = __importDefault(require("../models/product.model"));
+const router = (0, express_1.Router)();
+router.post("/regist", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, descricao, preco, file } = req.body;
+    const urlPhoto = file;
     try {
         if (!name)
             throw "O nome está incorreto";
@@ -25,7 +25,7 @@ const cadastrar_produto = (req, res) => __awaiter(void 0, void 0, void 0, functi
             throw "A descrição está incorreta";
         else if (!preco)
             throw "O preço está incorreto";
-        const product = yield products_model_1.default.create({
+        const product = yield product_model_1.default.create({
             urlPhoto,
             name,
             preco,
@@ -34,17 +34,26 @@ const cadastrar_produto = (req, res) => __awaiter(void 0, void 0, void 0, functi
         res.status(201).json(product);
     }
     catch (error) {
-        res.status(405).send("Erro" + error);
+        res.status(405).send({ error });
     }
-});
-exports.cadastrar_produto = cadastrar_produto;
-const selecionar_produtos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+}));
+router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const products = yield products_model_1.default.find({});
+        const products = yield product_model_1.default.find({});
         res.json(products);
     }
     catch (error) {
-        res.status(404).send("Erro: " + error);
+        res.status(404).send({ error });
     }
-});
-exports.selecionar_produtos = selecionar_produtos;
+}));
+router.get("/selectOne/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const products = yield product_model_1.default.findById(id);
+        res.json(products);
+    }
+    catch (error) {
+        res.status(404).send({ error });
+    }
+}));
+module.exports = (app) => app.use("/product", router);
