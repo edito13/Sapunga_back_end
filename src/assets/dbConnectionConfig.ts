@@ -9,6 +9,6 @@ const db_password = process.env.DB_PASSWORD;
 const URL =
   process.env.NODE_ENV === "production"
     ? `mongodb+srv://${db_user}:${db_password}@sapunga.wrmnh69.mongodb.net/sapunga?retryWrites=true&w=majority`
-    : "mongodb://localhost/sapunga";
+    : "mongodb://0.0.0.0:27017/sapunga";
 
 export default URL;
