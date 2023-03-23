@@ -1,6 +1,7 @@
 import express from "express";
 import auth from "../middleware/auth.middleware";
 import Order from "../models/order.model";
+import Product from "../models/product.model";
 
 const router = express.Router();
 
@@ -14,11 +15,9 @@ router.get("/selectAll", async (req, res) => {
   }
 });
 
-router.post("/selectOrdersUser", auth, async (req, res) => {
-  const { user } = req.body;
-
+router.get("/selectOrdersUser", auth, async (req, res) => {
   try {
-    const orders = await Order.find({ user }).populate(["user", "product"]);
+    const orders = await Order.find({ user: req.userId }).populate(["user", "product"]);
 
     res.json(orders);
   } catch (error) {
@@ -27,18 +26,24 @@ router.post("/selectOrdersUser", auth, async (req, res) => {
 });
 
 router.post("/orderProduct", auth, async (req, res) => {
-  const { user, product } = req.body;
+  const { productID } = req.body;
 
   try {
-    const orders = await Order.create({
+    const product = await Product.findById(productID)
+
+    if(!product) throw 'O producto não existe.'
+
+    const orderProduct = await Order.create({
       ...req.body,
-      user,
-      product,
+      user: req.userId,
+      product: productID,
     });
 
-    if (!orders) throw "Erro ao encomendar um produto";
+    if (!orderProduct) throw "Erro ao encomendar um produto";
 
-    res.json(orders.populate(["user", "product"]));
+    const orders = await Order.find({}).populate(["user", "product"])
+
+    res.status(201).json(orders);
   } catch (error) {
     res.status(400).send({ error });
   }

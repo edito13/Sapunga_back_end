@@ -17,7 +17,7 @@ router.post("/regist", async (req, res) => {
   }
 });
 
-router.post("/selectAll", async (req, res) => {
+router.get("/selectAll", async (req, res) => {
   try {
     const categories = await Category.find({});
 
