@@ -12,26 +12,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
+const express_1 = __importDefault(require("express"));
+const category_model_1 = __importDefault(require("../models/category.model"));
 const product_model_1 = __importDefault(require("../models/product.model"));
-const router = (0, express_1.Router)();
+const router = express_1.default.Router();
 router.post("/regist", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, descricao, preco, file } = req.body;
-    const urlPhoto = file;
+    const { name, describe, price, categoryID, urlPhoto } = req.body;
     try {
         if (!name)
-            throw "O nome está incorreto";
-        else if (!descricao)
-            throw "A descrição está incorreta";
-        else if (!preco)
-            throw "O preço está incorreto";
+            throw "Nome não enviado";
+        else if (!describe)
+            throw "Descrição não enviada";
+        else if (!price)
+            throw "Preço não enviado";
+        else if (!categoryID)
+            throw 'Categoria não especificada';
+        const category = yield category_model_1.default.findById(categoryID);
+        if (!category)
+            throw 'Categoria não existe';
         const product = yield product_model_1.default.create({
             urlPhoto,
             name,
-            preco,
-            descricao,
+            price,
+            describe,
+            category: categoryID,
         });
-        res.status(201).json(product);
+        if (!product)
+            throw 'Não foi possível cadastrar o produto';
+        const products = yield product_model_1.default.find({}).populate('category');
+        res.status(201).json(products);
     }
     catch (error) {
         res.status(405).send({ error });
@@ -39,7 +48,7 @@ router.post("/regist", (req, res) => __awaiter(void 0, void 0, void 0, function*
 }));
 router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const products = yield product_model_1.default.find({});
+        const products = yield product_model_1.default.find({}).populate('category');
         res.json(products);
     }
     catch (error) {
@@ -49,11 +58,23 @@ router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, functio
 router.get("/selectOne/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
-        const products = yield product_model_1.default.findById(id);
+        const products = yield product_model_1.default.findById(id).populate('category');
         res.json(products);
     }
     catch (error) {
         res.status(404).send({ error });
+    }
+}));
+router.delete("/delete", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.body;
+    try {
+        const product = yield product_model_1.default.findByIdAndRemove(id);
+        if (!product)
+            throw "Produto não encontrado!";
+        res.json(product);
+    }
+    catch (error) {
+        res.status(400).send({ error });
     }
 }));
 module.exports = (app) => app.use("/product", router);

@@ -13,11 +13,54 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const auth_middleware_1 = __importDefault(require("../middleware/auth.middleware"));
+const product_model_1 = __importDefault(require("../models/product.model"));
 const react_model_1 = __importDefault(require("../models/react.model"));
 const router = express_1.default.Router();
+router.post("/reactProduct", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { productID } = req.body;
+    try {
+        // Checking whether the product existis
+        const product = yield product_model_1.default.findById(productID);
+        if (!product)
+            throw "Produto não existe.";
+        const react = yield react_model_1.default.create({
+            user: req.userId,
+            product: productID,
+        });
+        if (!react)
+            throw "Não foi possível reagir ao produto";
+        res.json(react);
+    }
+    catch (error) {
+        res.status(400).send({ error });
+    }
+}));
 router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const reacts = yield react_model_1.default.find({}).populate(["user", "product"]);
+        res.json(reacts);
+    }
+    catch (error) {
+        res.status(400).send({ error });
+    }
+}));
+router.get("/selectUserReacts", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const reacts = yield react_model_1.default.find({ user: req.userId }).populate(["user", "product"]);
+        res.json(reacts);
+    }
+    catch (error) {
+        res.status(400).send({ error });
+    }
+}));
+router.delete("/unReact", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.body;
+    try {
+        const react = yield react_model_1.default.findByIdAndRemove(id);
+        if (!react)
+            throw 'Não foi possível desrreagir esse produto';
+        const reacts = yield react_model_1.default.find({}).populate(['user', 'product']);
         res.json(reacts);
     }
     catch (error) {

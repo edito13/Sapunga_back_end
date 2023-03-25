@@ -1,10 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const ProductSchema = new mongoose_1.default.Schema({
+const mongoose_1 = require("mongoose");
+const ProductSchema = new mongoose_1.Schema({
     urlPhoto: {
         type: String,
         require: true,
@@ -13,18 +10,23 @@ const ProductSchema = new mongoose_1.default.Schema({
         type: String,
         require: true,
     },
-    descricao: {
+    describe: {
         type: String,
         require: true,
     },
-    preco: {
+    price: {
         type: Number,
         require: true,
+    },
+    category: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'Category',
+        requir: true
     },
     createdAt: {
         type: Date,
         default: Date.now(),
     },
 });
-const Product = mongoose_1.default.model("Product", ProductSchema);
+const Product = (0, mongoose_1.model)("Product", ProductSchema);
 exports.default = Product;

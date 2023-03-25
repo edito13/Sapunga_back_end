@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const auth_middleware_1 = __importDefault(require("../middleware/auth.middleware"));
 const order_model_1 = __importDefault(require("../models/order.model"));
+const product_model_1 = __importDefault(require("../models/product.model"));
 const router = express_1.default.Router();
 router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -25,10 +26,9 @@ router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(400).send({ error });
     }
 }));
-router.post("/selectOrdersUser", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { user } = req.body;
+router.get("/selectOrdersUser", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const orders = yield order_model_1.default.find({ user }).populate(["user", "product"]);
+        const orders = yield order_model_1.default.find({ user: req.userId }).populate(["user", "product"]);
         res.json(orders);
     }
     catch (error) {
@@ -36,13 +36,16 @@ router.post("/selectOrdersUser", auth_middleware_1.default, (req, res) => __awai
     }
 }));
 router.post("/orderProduct", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { user, product } = req.body;
+    const { productID } = req.body;
     try {
-        const orders = yield order_model_1.default.create(Object.assign(Object.assign({}, req.body), { user,
-            product }));
-        if (!orders)
+        const product = yield product_model_1.default.findById(productID);
+        if (!product)
+            throw 'O producto não existe.';
+        const orderProduct = yield order_model_1.default.create(Object.assign(Object.assign({}, req.body), { user: req.userId, product: productID }));
+        if (!orderProduct)
             throw "Erro ao encomendar um produto";
-        res.json(orders.populate(["user", "product"]));
+        const orders = yield order_model_1.default.find({}).populate(["user", "product"]);
+        res.status(201).json(orders);
     }
     catch (error) {
         res.status(400).send({ error });

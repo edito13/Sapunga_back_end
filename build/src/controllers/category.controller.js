@@ -27,7 +27,7 @@ router.post("/regist", (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(400).send({ error });
     }
 }));
-router.post("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const categories = yield category_model_1.default.find({});
         res.json(categories);

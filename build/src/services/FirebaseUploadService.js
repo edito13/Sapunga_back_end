@@ -31,11 +31,12 @@ class FirebaseUploadService {
                 };
                 const snapshot = yield (0, storage_1.uploadBytesResumable)(storageRef, req.file.buffer, metadata);
                 yield (0, storage_1.uploadBytes)(storageRef, req.file.buffer);
-                const imageURL = (0, storage_1.getDownloadURL)(snapshot.ref).then((urlImage) => urlImage);
+                const downloadURL = yield (0, storage_1.getDownloadURL)(snapshot.ref);
+                const url = snapshot.metadata.fullPath;
                 return res.send({
                     // url: this.getFullAddress(filename),
                     filename,
-                    url: imageURL,
+                    url,
                     // storageRef,
                 });
             }
