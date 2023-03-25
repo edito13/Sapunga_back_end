@@ -13,6 +13,7 @@ router.post("/regist", async (req, res) => {
 
   try {
     if (user) throw "Já existe um usuário com este e-mail";
+    
     // If it´s all ok
 
     const salt = await bcrypt.genSalt(12);
