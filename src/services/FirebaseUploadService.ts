@@ -34,12 +34,10 @@ export class FirebaseUploadService implements UploadProvider {
 
       const downloadURL = await getDownloadURL(snapshot.ref);
 
-      const url = snapshot.metadata.fullPath;
-
       return res.send({
         // url: this.getFullAddress(filename),
         filename,
-        url,
+        url: downloadURL,
         // storageRef,
       });
     } catch (e: any) {

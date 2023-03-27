@@ -17,7 +17,10 @@ router.get("/selectAll", async (req, res) => {
 
 router.get("/selectOrdersUser", auth, async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.userId }).populate(["user", "product"]);
+    const orders = await Order.find({ user: req.userId }).populate([
+      "user",
+      "product",
+    ]);
 
     res.json(orders);
   } catch (error) {
@@ -29,9 +32,9 @@ router.post("/orderProduct", auth, async (req, res) => {
   const { productID } = req.body;
 
   try {
-    const product = await Product.findById(productID)
+    const product = await Product.findById(productID);
 
-    if(!product) throw 'O producto não existe.'
+    if (!product) throw "O producto não existe.";
 
     const orderProduct = await Order.create({
       ...req.body,
@@ -41,7 +44,7 @@ router.post("/orderProduct", auth, async (req, res) => {
 
     if (!orderProduct) throw "Erro ao encomendar um produto";
 
-    const orders = await Order.find({}).populate(["user", "product"])
+    const orders = await Order.find({}).populate(["user", "product"]);
 
     res.status(201).json(orders);
   } catch (error) {
@@ -49,7 +52,7 @@ router.post("/orderProduct", auth, async (req, res) => {
   }
 });
 
-router.delete("/delete", async (req, res) => {
+router.delete("/delete", auth, async (req, res) => {
   const { id } = req.body;
 
   try {
