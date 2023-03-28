@@ -29,7 +29,7 @@ router.get("/selectOrdersUser", auth, async (req, res) => {
 });
 
 router.post("/orderProduct", auth, async (req, res) => {
-  const { productID } = req.body;
+  const { productID, quantity } = req.body;
 
   try {
     const product = await Product.findById(productID);
@@ -40,6 +40,7 @@ router.post("/orderProduct", auth, async (req, res) => {
       ...req.body,
       user: req.userId,
       product: productID,
+      quantity,
     });
 
     if (!orderProduct) throw "Erro ao encomendar um produto";

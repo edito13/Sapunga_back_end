@@ -7,6 +7,10 @@ const OrderSchema = new Schema({
     require: true,
   },
   product: { type: Schema.Types.ObjectId, ref: "Product", require: true },
+  quantity: {
+    type: Number,
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
