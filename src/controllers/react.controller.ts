@@ -36,24 +36,27 @@ router.get("/selectAll", async (req, res) => {
   }
 });
 
-router.get("/selectUserReacts", auth,async (req, res) => {
+router.get("/selectUserReacts", auth, async (req, res) => {
   try {
-    const reacts = await React.find({user: req.userId}).populate(["user", "product"]);
+    const reacts = await React.find({ user: req.userId }).populate([
+      "user",
+      "product",
+    ]);
     res.json(reacts);
   } catch (error) {
     res.status(400).send({ error });
   }
 });
 
-
 router.delete("/unReact", async (req, res) => {
-  const { id } = req.body
+  const { id } = req.body;
   try {
-    const react = await React.findByIdAndRemove(id)
+    const react = await React.findByIdAndRemove(id);
 
-    if(!react) throw 'Não foi possível desrreagir esse produto'
-    
-    const reacts = await React.find({}).populate(['user','product'])
+    if (!react) throw "Não foi possível desfavoritar esse produto";
+
+    const reacts = await React.find({}).populate(["user", "product"]);
+
     res.json(reacts);
   } catch (error) {
     res.status(400).send({ error });
