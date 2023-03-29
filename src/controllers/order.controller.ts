@@ -61,7 +61,9 @@ router.delete("/delete", auth, async (req, res) => {
 
     if (!order) throw "Encomenda não encontrada!";
 
-    res.json(order);
+    const orders = await Order.find({}).populate(["user", "product"]);
+
+    res.json(orders);
   } catch (error) {
     res.status(400).send({ error });
   }
