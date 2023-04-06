@@ -3,7 +3,7 @@ import Category from "../models/category.model";
 
 const router = express.Router();
 
-router.post("/regist", async (req, res) => {
+router.post("/", async (req, res) => {
   const { name } = req.body;
 
   try {
@@ -17,9 +17,23 @@ router.post("/regist", async (req, res) => {
   }
 });
 
-router.get("/selectAll", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const categories = await Category.find({});
+
+    res.json(categories);
+  } catch (error) {
+    res.status(400).send({ error });
+  }
+});
+
+router.delete("/", async (req, res) => {
+  const { id } = req.body;
+
+  try {
+    const categories = await Category.findByIdAndRemove(id);
+
+    if (!categories) throw "Categoria não encontrada!";
 
     res.json(categories);
   } catch (error) {

@@ -1,6 +1,7 @@
 import express from "express";
 import Category from "../models/category.model";
 import Product from "../models/product.model";
+import { ProductCategoryI } from "../types";
 
 const router = express.Router();
 
@@ -43,6 +44,24 @@ router.get("/selectAll", async (req, res) => {
   }
 });
 
+// router.get("/selectAllProducts", async (req, res) => {
+//   try {
+//     const categories = await Category.find({})
+//     const products = await Product.find({}).populate("category");
+//     const prod: ProductCategoryI[] = []
+//     categories.forEach(category => {
+//       const productsCategory = products.filter(product => product.category?._id === category._id)
+//       prod.push({
+//         category: { category._idm },
+//         products: productsCategory
+//       })
+//     }))
+//     res.json(prod);
+//   } catch (error) {
+//     res.status(404).send({ error });
+//   }
+// });
+
 router.get("/selectOne/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -62,7 +81,9 @@ router.delete("/delete", async (req, res) => {
 
     if (!product) throw "Produto não encontrado!";
 
-    res.json(product);
+    const Products = await Product.find({}).populate("category");
+
+    res.json(Products);
   } catch (error) {
     res.status(400).send({ error });
   }
