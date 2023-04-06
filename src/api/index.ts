@@ -30,9 +30,10 @@ route.post("/uploads", uploadFile);
 
 require("../controllers/user.controller")(app);
 require("../controllers/product.controller")(app);
-require("../controllers/category.controller")(app);
 require("../controllers/order.controller")(app);
 require("../controllers/react.controller")(app);
+require("../controllers/category.controller")(app);
+require("../controllers/admin.controller")(app);
 
 app.use(route);
 
