@@ -1,33 +1,51 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Document, PreMiddlewareFunction } from "mongoose";
 
-const ProductSchema = new Schema({
+interface IProduct extends Document {
+  urlPhoto: string;
+  name: string;
+  describe: string;
+  price: number;
+  category: Schema.Types.ObjectId;
+  createdAt: Date;
+}
+
+const ProductSchema = new Schema<IProduct>({
   urlPhoto: {
     type: String,
-    require: true,
+    required: true,
   },
   name: {
     type: String,
-    require: true,
+    required: true,
   },
   describe: {
     type: String,
-    require: true,
+    required: true,
   },
   price: {
     type: Number,
-    require: true,
+    required: true,
   },
-    category: {
-      type: Schema.Types.ObjectId,
-      ref: 'Category',
-      requir: true
-    },
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: "Category",
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
   },
 });
 
-const Product = model("Product", ProductSchema);
+// const preRemoveMiddleware: PreMiddlewareFunction<IProduct> = function (next) {
+//   console.log(this);
+//   // next();
+// };
+
+// ProductSchema.post("save", (product: IProduct) => {
+//   console.log(product);
+// });
+
+const Product = model<IProduct>("Product", ProductSchema);
 
 export default Product;

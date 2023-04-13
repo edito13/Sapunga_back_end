@@ -4,12 +4,12 @@ const ReactSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    require: true,
+    required: true,
   },
   product: {
     type: Schema.Types.ObjectId,
     ref: "Product",
-    require: true,
+    required: true,
   },
   createdAt: {
     type: Date,

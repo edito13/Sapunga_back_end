@@ -5,7 +5,7 @@ import React from "../models/react.model";
 
 const router = express.Router();
 
-router.post("/reactProduct", auth, async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { productID } = req.body;
 
   try {
@@ -21,7 +21,8 @@ router.post("/reactProduct", auth, async (req, res) => {
 
     if (!react) throw "Não foi possível reagir ao produto";
 
-    res.json(react);
+    const reacts = await React.find({}).populate(["user", "product"]);
+    res.json(reacts);
   } catch (error) {
     res.status(400).send({ error });
   }

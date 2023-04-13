@@ -5,6 +5,26 @@ import { ProductCategoryI } from "../types";
 
 const router = express.Router();
 
+const pipeline = [
+  {
+    $lookup: {
+      from: "categories",
+      localField: "category",
+      foreignField: "_id",
+      as: "category",
+    },
+  },
+  {
+    $unwind: "$category",
+  },
+  {
+    $group: {
+      _id: "$category.name",
+      products: { $push: "$$ROOT" },
+    },
+  },
+];
+
 router.post("/regist", async (req, res) => {
   const { name, describe, price, categoryID, urlPhoto } = req.body;
 
@@ -44,23 +64,15 @@ router.get("/selectAll", async (req, res) => {
   }
 });
 
-// router.get("/selectAllProducts", async (req, res) => {
-//   try {
-//     const categories = await Category.find({})
-//     const products = await Product.find({}).populate("category");
-//     const prod: ProductCategoryI[] = []
-//     categories.forEach(category => {
-//       const productsCategory = products.filter(product => product.category?._id === category._id)
-//       prod.push({
-//         category: { category._idm },
-//         products: productsCategory
-//       })
-//     }))
-//     res.json(prod);
-//   } catch (error) {
-//     res.status(404).send({ error });
-//   }
-// });
+router.get("/selectAllProducts", async (req, res) => {
+  try {
+    const products = await Product.aggregate(pipeline);
+
+    res.json(products);
+  } catch (error) {
+    res.status(404).send({ error });
+  }
+});
 
 router.get("/selectOne/:id", async (req, res) => {
   const { id } = req.params;
