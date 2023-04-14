@@ -4,7 +4,7 @@ const mongoose_1 = require("mongoose");
 const CategorySchema = new mongoose_1.Schema({
     name: {
         type: String,
-        require: true,
+        required: true,
     },
     createdAt: {
         type: Date,

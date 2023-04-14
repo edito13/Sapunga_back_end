@@ -5,12 +5,12 @@ const ReactSchema = new mongoose_1.Schema({
     user: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "User",
-        require: true,
+        required: true,
     },
     product: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "Product",
-        require: true,
+        required: true,
     },
     createdAt: {
         type: Date,

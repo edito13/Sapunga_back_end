@@ -28,7 +28,10 @@ router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, functio
 }));
 router.get("/selectOrdersUser", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const orders = yield order_model_1.default.find({ user: req.userId }).populate(["user", "product"]);
+        const orders = yield order_model_1.default.find({ user: req.userId }).populate([
+            "user",
+            "product",
+        ]);
         res.json(orders);
     }
     catch (error) {
@@ -36,12 +39,12 @@ router.get("/selectOrdersUser", auth_middleware_1.default, (req, res) => __await
     }
 }));
 router.post("/orderProduct", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { productID } = req.body;
+    const { productID, quantity } = req.body;
     try {
         const product = yield product_model_1.default.findById(productID);
         if (!product)
-            throw 'O producto não existe.';
-        const orderProduct = yield order_model_1.default.create(Object.assign(Object.assign({}, req.body), { user: req.userId, product: productID }));
+            throw "O producto não existe.";
+        const orderProduct = yield order_model_1.default.create(Object.assign(Object.assign({}, req.body), { user: req.userId, product: productID, quantity }));
         if (!orderProduct)
             throw "Erro ao encomendar um produto";
         const orders = yield order_model_1.default.find({}).populate(["user", "product"]);
@@ -51,13 +54,14 @@ router.post("/orderProduct", auth_middleware_1.default, (req, res) => __awaiter(
         res.status(400).send({ error });
     }
 }));
-router.delete("/delete", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/delete", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.body;
     try {
         const order = yield order_model_1.default.findByIdAndRemove(id);
         if (!order)
             throw "Encomenda não encontrada!";
-        res.json(order);
+        const orders = yield order_model_1.default.find({}).populate(["user", "product"]);
+        res.json(orders);
     }
     catch (error) {
         res.status(400).send({ error });

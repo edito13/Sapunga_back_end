@@ -4,29 +4,36 @@ const mongoose_1 = require("mongoose");
 const ProductSchema = new mongoose_1.Schema({
     urlPhoto: {
         type: String,
-        require: true,
+        required: true,
     },
     name: {
         type: String,
-        require: true,
+        required: true,
     },
     describe: {
         type: String,
-        require: true,
+        required: true,
     },
     price: {
         type: Number,
-        require: true,
+        required: true,
     },
     category: {
         type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'Category',
-        requir: true
+        ref: "Category",
+        required: true,
     },
     createdAt: {
         type: Date,
         default: Date.now(),
     },
 });
+// const preRemoveMiddleware: PreMiddlewareFunction<IProduct> = function (next) {
+//   console.log(this);
+//   // next();
+// };
+// ProductSchema.post("save", (product: IProduct) => {
+//   console.log(product);
+// });
 const Product = (0, mongoose_1.model)("Product", ProductSchema);
 exports.default = Product;

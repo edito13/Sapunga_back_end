@@ -17,7 +17,7 @@ const auth_middleware_1 = __importDefault(require("../middleware/auth.middleware
 const product_model_1 = __importDefault(require("../models/product.model"));
 const react_model_1 = __importDefault(require("../models/react.model"));
 const router = express_1.default.Router();
-router.post("/reactProduct", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { productID } = req.body;
     try {
         // Checking whether the product existis
@@ -30,7 +30,8 @@ router.post("/reactProduct", auth_middleware_1.default, (req, res) => __awaiter(
         });
         if (!react)
             throw "Não foi possível reagir ao produto";
-        res.json(react);
+        const reacts = yield react_model_1.default.find({}).populate(["user", "product"]);
+        res.json(reacts);
     }
     catch (error) {
         res.status(400).send({ error });
@@ -47,7 +48,10 @@ router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, functio
 }));
 router.get("/selectUserReacts", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const reacts = yield react_model_1.default.find({ user: req.userId }).populate(["user", "product"]);
+        const reacts = yield react_model_1.default.find({ user: req.userId }).populate([
+            "user",
+            "product",
+        ]);
         res.json(reacts);
     }
     catch (error) {
@@ -59,8 +63,8 @@ router.delete("/unReact", (req, res) => __awaiter(void 0, void 0, void 0, functi
     try {
         const react = yield react_model_1.default.findByIdAndRemove(id);
         if (!react)
-            throw 'Não foi possível desrreagir esse produto';
-        const reacts = yield react_model_1.default.find({}).populate(['user', 'product']);
+            throw "Não foi possível desfavoritar esse produto";
+        const reacts = yield react_model_1.default.find({}).populate(["user", "product"]);
         res.json(reacts);
     }
     catch (error) {

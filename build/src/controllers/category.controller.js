@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const category_model_1 = __importDefault(require("../models/category.model"));
 const router = express_1.default.Router();
-router.post("/regist", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name } = req.body;
     try {
         if (!name)
@@ -27,9 +27,21 @@ router.post("/regist", (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(400).send({ error });
     }
 }));
-router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const categories = yield category_model_1.default.find({});
+        res.json(categories);
+    }
+    catch (error) {
+        res.status(400).send({ error });
+    }
+}));
+router.delete("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.body;
+    try {
+        const categories = yield category_model_1.default.findByIdAndRemove(id);
+        if (!categories)
+            throw "Categoria não encontrada!";
         res.json(categories);
     }
     catch (error) {
