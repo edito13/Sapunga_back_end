@@ -2,6 +2,8 @@ import express from "express";
 import auth from "../middleware/auth.middleware";
 import Order from "../models/order.model";
 import Product from "../models/product.model";
+import { Telegraf } from "telegraf";
+import User from "../models/user.model";
 
 const router = express.Router();
 
@@ -28,6 +30,24 @@ router.get("/selectOrdersUser", auth, async (req, res) => {
   }
 });
 
+// route.post("/sms", (req, res) => {
+//   const { name, phoneNumber, message } = req.body;
+
+//   const bot = new Telegraf("6247664565:AAG7EcKWm_Zyn34drKwMsnYPpY2-lqC5_CI");
+//   bot.telegram.sendMessage(
+//     5142203429,
+//     `
+//     ${name} com o seguinte número ${phoneNumber}, acabou de mandar a seguinte mensagem: ${message}
+//   `
+//   );
+//   res.send("Mensagem foi enviada com sucesso!");
+//   // bot.start((ctx) => ctx.reply("Welcome"));
+//   // bot.help((ctx) => ctx.reply("Send me a sticker"));
+//   // bot.on(message("sticker"), (ctx) => ctx.reply("👍"));
+//   // bot.hears("hi", (ctx) => ctx.reply("Hey there"));
+//   // bot.launch();
+// });
+
 router.post("/orderProduct", auth, async (req, res) => {
   const { productID, quantity } = req.body;
 
@@ -46,6 +66,17 @@ router.post("/orderProduct", auth, async (req, res) => {
     if (!orderProduct) throw "Erro ao encomendar um produto";
 
     const orders = await Order.find({}).populate(["user", "product"]);
+    const user = await User.findById(req.userId);
+    const ProductItem = await Product.findById(productID);
+
+    const bot = new Telegraf("6247664565:AAG7EcKWm_Zyn34drKwMsnYPpY2-lqC5_CI");
+    bot.telegram.sendMessage(
+      5142203429,
+      `#### Nova Encomenda ####
+
+    ${user?.name} com o seguinte endereço de e-mail ${user?.email}, acabou de encomendar o seguinte produto: ${ProductItem?.name}
+  `
+    );
 
     res.status(201).json(orders);
   } catch (error) {
