@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const ReactSchema = new Schema({
+const FavouriteSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -17,6 +17,6 @@ const ReactSchema = new Schema({
   },
 });
 
-const React = model("React", ReactSchema);
+const Favourite = model("Favourite", FavouriteSchema);
 
-export default React;
+export default Favourite;

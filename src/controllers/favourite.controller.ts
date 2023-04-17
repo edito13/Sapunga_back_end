@@ -1,7 +1,7 @@
 import express from "express";
 import auth from "../middleware/auth.middleware";
 import Product from "../models/product.model";
-import React from "../models/react.model";
+import Favourite from "../models/favourite.model";
 
 const router = express.Router();
 
@@ -14,32 +14,32 @@ router.post("/", auth, async (req, res) => {
 
     if (!product) throw "Produto não existe.";
 
-    const react = await React.create({
+    const react = await Favourite.create({
       user: req.userId,
       product: productID,
     });
 
     if (!react) throw "Não foi possível reagir ao produto";
 
-    const reacts = await React.find({}).populate(["user", "product"]);
+    const reacts = await Favourite.find({}).populate(["user", "product"]);
     res.json(reacts);
   } catch (error) {
     res.status(400).send({ error });
   }
 });
 
-router.get("/selectAll", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const reacts = await React.find({}).populate(["user", "product"]);
+    const reacts = await Favourite.find({}).populate(["user", "product"]);
     res.json(reacts);
   } catch (error) {
     res.status(400).send({ error });
   }
 });
 
-router.get("/selectUserReacts", auth, async (req, res) => {
+router.get("/userFavourites", auth, async (req, res) => {
   try {
-    const reacts = await React.find({ user: req.userId }).populate([
+    const reacts = await Favourite.find({ user: req.userId }).populate([
       "user",
       "product",
     ]);
@@ -49,14 +49,14 @@ router.get("/selectUserReacts", auth, async (req, res) => {
   }
 });
 
-router.delete("/unReact", async (req, res) => {
+router.delete("/", async (req, res) => {
   const { id } = req.body;
   try {
-    const react = await React.findByIdAndRemove(id);
+    const react = await Favourite.findByIdAndRemove(id);
 
     if (!react) throw "Não foi possível desfavoritar esse produto";
 
-    const reacts = await React.find({}).populate(["user", "product"]);
+    const reacts = await Favourite.find({}).populate(["user", "product"]);
 
     res.json(reacts);
   } catch (error) {
@@ -64,4 +64,4 @@ router.delete("/unReact", async (req, res) => {
   }
 });
 
-module.exports = (app: any) => app.use("/react", router);
+module.exports = (app: any) => app.use("/favourite", router);

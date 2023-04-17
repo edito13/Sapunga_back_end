@@ -6,7 +6,7 @@ import auth from "../middleware/auth.middleware";
 
 const router = express.Router();
 
-router.post("/regist", async (req, res) => {
+router.post("/", async (req, res) => {
   const { name, email, password } = req.body;
 
   const user = await User.findOne({ email });
@@ -34,7 +34,7 @@ router.post("/regist", async (req, res) => {
   }
 });
 
-router.get("/selectAll", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const users = await User.find({});
     res.json(users);
@@ -43,7 +43,7 @@ router.get("/selectAll", async (req, res) => {
   }
 });
 
-router.get("/selectOne/:id", auth, async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -55,7 +55,7 @@ router.get("/selectOne/:id", auth, async (req, res) => {
   }
 });
 
-router.delete("/delete", async (req, res) => {
+router.delete("/", async (req, res) => {
   const { id } = req.body;
 
   try {

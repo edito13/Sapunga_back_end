@@ -25,7 +25,7 @@ const pipeline = [
   },
 ];
 
-router.post("/regist", async (req, res) => {
+router.post("/", async (req, res) => {
   const { name, describe, price, categoryID, urlPhoto } = req.body;
 
   try {
@@ -55,7 +55,7 @@ router.post("/regist", async (req, res) => {
   }
 });
 
-router.get("/selectAll", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const products = await Product.find({}).populate("category");
     res.json(products);
@@ -64,7 +64,7 @@ router.get("/selectAll", async (req, res) => {
   }
 });
 
-router.get("/selectAllProducts", async (req, res) => {
+router.get("/all", async (req, res) => {
   try {
     const products = await Product.aggregate(pipeline);
 
@@ -74,7 +74,7 @@ router.get("/selectAllProducts", async (req, res) => {
   }
 });
 
-router.get("/selectOne/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -85,7 +85,7 @@ router.get("/selectOne/:id", async (req, res) => {
   }
 });
 
-router.delete("/delete", async (req, res) => {
+router.delete("/", async (req, res) => {
   const { id } = req.body;
 
   try {
