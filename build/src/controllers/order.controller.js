@@ -16,8 +16,10 @@ const express_1 = __importDefault(require("express"));
 const auth_middleware_1 = __importDefault(require("../middleware/auth.middleware"));
 const order_model_1 = __importDefault(require("../models/order.model"));
 const product_model_1 = __importDefault(require("../models/product.model"));
+const telegraf_1 = require("telegraf");
+const user_model_1 = __importDefault(require("../models/user.model"));
 const router = express_1.default.Router();
-router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const orders = yield order_model_1.default.find({}).populate(["user", "product"]);
         res.json(orders);
@@ -26,7 +28,7 @@ router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(400).send({ error });
     }
 }));
-router.get("/selectOrdersUser", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/ordersUser", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const orders = yield order_model_1.default.find({ user: req.userId }).populate([
             "user",
@@ -38,7 +40,23 @@ router.get("/selectOrdersUser", auth_middleware_1.default, (req, res) => __await
         res.status(400).send({ error });
     }
 }));
-router.post("/orderProduct", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// route.post("/sms", (req, res) => {
+//   const { name, phoneNumber, message } = req.body;
+//   const bot = new Telegraf("6247664565:AAG7EcKWm_Zyn34drKwMsnYPpY2-lqC5_CI");
+//   bot.telegram.sendMessage(
+//     5142203429,
+//     `
+//     ${name} com o seguinte número ${phoneNumber}, acabou de mandar a seguinte mensagem: ${message}
+//   `
+//   );
+//   res.send("Mensagem foi enviada com sucesso!");
+//   // bot.start((ctx) => ctx.reply("Welcome"));
+//   // bot.help((ctx) => ctx.reply("Send me a sticker"));
+//   // bot.on(message("sticker"), (ctx) => ctx.reply("👍"));
+//   // bot.hears("hi", (ctx) => ctx.reply("Hey there"));
+//   // bot.launch();
+// });
+router.post("/", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { productID, quantity } = req.body;
     try {
         const product = yield product_model_1.default.findById(productID);
@@ -48,13 +66,20 @@ router.post("/orderProduct", auth_middleware_1.default, (req, res) => __awaiter(
         if (!orderProduct)
             throw "Erro ao encomendar um produto";
         const orders = yield order_model_1.default.find({}).populate(["user", "product"]);
+        const user = yield user_model_1.default.findById(req.userId);
+        const ProductItem = yield product_model_1.default.findById(productID);
+        const bot = new telegraf_1.Telegraf("6247664565:AAG7EcKWm_Zyn34drKwMsnYPpY2-lqC5_CI");
+        bot.telegram.sendMessage(5142203429, `#### Nova Encomenda ####
+
+    ${user === null || user === void 0 ? void 0 : user.name} com o seguinte endereço de e-mail ${user === null || user === void 0 ? void 0 : user.email}, acabou de encomendar o seguinte produto: ${ProductItem === null || ProductItem === void 0 ? void 0 : ProductItem.name}
+  `);
         res.status(201).json(orders);
     }
     catch (error) {
         res.status(400).send({ error });
     }
 }));
-router.delete("/delete", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.body;
     try {
         const order = yield order_model_1.default.findByIdAndRemove(id);

@@ -35,7 +35,7 @@ const pipeline = [
         },
     },
 ];
-router.post("/regist", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, describe, price, categoryID, urlPhoto } = req.body;
     try {
         if (!name)
@@ -65,7 +65,7 @@ router.post("/regist", (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(405).send({ error });
     }
 }));
-router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const products = yield product_model_1.default.find({}).populate("category");
         res.json(products);
@@ -74,7 +74,7 @@ router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(404).send({ error });
     }
 }));
-router.get("/selectAllProducts", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const products = yield product_model_1.default.aggregate(pipeline);
         res.json(products);
@@ -83,7 +83,7 @@ router.get("/selectAllProducts", (req, res) => __awaiter(void 0, void 0, void 0,
         res.status(404).send({ error });
     }
 }));
-router.get("/selectOne/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
         const products = yield product_model_1.default.findById(id).populate("category");
@@ -93,7 +93,7 @@ router.get("/selectOne/:id", (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.status(404).send({ error });
     }
 }));
-router.delete("/delete", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.body;
     try {
         const product = yield product_model_1.default.findByIdAndRemove(id);

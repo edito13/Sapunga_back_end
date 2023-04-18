@@ -32,10 +32,12 @@ class FirebaseUploadService {
                 const snapshot = yield (0, storage_1.uploadBytesResumable)(storageRef, req.file.buffer, metadata);
                 yield (0, storage_1.uploadBytes)(storageRef, req.file.buffer);
                 const downloadURL = yield (0, storage_1.getDownloadURL)(snapshot.ref);
+                const fullAddress = this.getFullAddress(filename);
+                const viewURL = `${fullAddress}?alt=media`;
                 return res.send({
                     // url: this.getFullAddress(filename),
                     filename,
-                    url: downloadURL,
+                    url: viewURL,
                     // storageRef,
                 });
             }

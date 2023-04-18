@@ -18,12 +18,12 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_model_1 = __importDefault(require("../models/user.model"));
 const auth_middleware_1 = __importDefault(require("../middleware/auth.middleware"));
 const router = express_1.default.Router();
-router.post("/regist", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, password } = req.body;
     const user = yield user_model_1.default.findOne({ email });
     try {
         if (user)
-            throw "Já existe um usuário com este e-mail";
+            throw "Já existe um usuário com este e-mail.";
         // If it´s all ok
         const salt = yield bcrypt_1.default.genSalt(12);
         const passwordCrypted = yield bcrypt_1.default.hash(password, salt);
@@ -32,13 +32,15 @@ router.post("/regist", (req, res) => __awaiter(void 0, void 0, void 0, function*
             email,
             password: passwordCrypted,
         });
-        res.status(201).json({ user: userRegisted });
+        const secret = process.env.SECRET;
+        const token = jsonwebtoken_1.default.sign({ id: userRegisted._id }, secret);
+        res.status(201).json({ user: userRegisted, token });
     }
     catch (error) {
-        res.status(401).send({ error });
+        res.send({ error: error });
     }
 }));
-router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = yield user_model_1.default.find({});
         res.json(users);
@@ -47,7 +49,7 @@ router.get("/selectAll", (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(400).send({ error });
     }
 }));
-router.get("/selectOne/:id", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/:id", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
         const user = yield user_model_1.default.findById(id);
@@ -59,7 +61,7 @@ router.get("/selectOne/:id", auth_middleware_1.default, (req, res) => __awaiter(
         res.status(401).send({ error });
     }
 }));
-router.delete("/delete", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.body;
     try {
         const user = yield user_model_1.default.findByIdAndRemove(id);
@@ -76,10 +78,24 @@ router.post("/checkLogin", (req, res) => __awaiter(void 0, void 0, void 0, funct
     const user = yield user_model_1.default.findOne({ email }).select("+password");
     try {
         if (!user)
-            throw "Este email não está cadastrado";
+            throw "Este email não está cadastrado ainda";
         const checkPassword = yield bcrypt_1.default.compare(password, user.password);
         if (!checkPassword)
             throw "Sua senha está incorreta, tente novamente.";
+        const secret = process.env.SECRET;
+        const token = jsonwebtoken_1.default.sign({ id: user._id }, secret);
+        res.json({ user, token });
+    }
+    catch (error) {
+        res.send({ error: error });
+    }
+}));
+router.post("/checkLoginGoogle", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.body;
+    const user = yield user_model_1.default.findOne({ email });
+    try {
+        if (!user)
+            throw "Este email não está cadastrado ainda";
         const secret = process.env.SECRET;
         const token = jsonwebtoken_1.default.sign({ id: user._id }, secret);
         res.json({ user, token });
