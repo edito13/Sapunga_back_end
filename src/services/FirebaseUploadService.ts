@@ -52,6 +52,6 @@ export class FirebaseUploadService implements UploadProvider {
       options: { storageBucket },
     } = firebaseApp;
     // return `https://storage.googleapis.com/${storageBucket}/${filename}?alt=media`;
-    return `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/${filename}`;
+    return `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/${filename}`;
   }
 }
