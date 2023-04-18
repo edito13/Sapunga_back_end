@@ -12,12 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Mailgun = require("mailgun.js");
-const formData = require("form-data");
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
-const api = require("../../node_modules/clicksend/api.js");
 // Importing Database Conection
 const conection_1 = __importDefault(require("../database/conection"));
 const multerConfig_1 = require("../assets/multerConfig");

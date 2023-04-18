@@ -1,9 +1,6 @@
-const Mailgun = require("mailgun.js");
-const formData = require("form-data");
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-const api = require("../../node_modules/clicksend/api.js");
 
 // Importing Database Conection
 import ConnectToDatabase from "../database/conection";
