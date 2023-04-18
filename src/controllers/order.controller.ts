@@ -7,7 +7,7 @@ import User from "../models/user.model";
 
 const router = express.Router();
 
-router.get("/selectAll", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const orders = await Order.find({}).populate(["user", "product"]);
 
@@ -17,7 +17,7 @@ router.get("/selectAll", async (req, res) => {
   }
 });
 
-router.get("/selectOrdersUser", auth, async (req, res) => {
+router.get("/ordersUser", auth, async (req, res) => {
   try {
     const orders = await Order.find({ user: req.userId }).populate([
       "user",
@@ -48,7 +48,7 @@ router.get("/selectOrdersUser", auth, async (req, res) => {
 //   // bot.launch();
 // });
 
-router.post("/orderProduct", auth, async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { productID, quantity } = req.body;
 
   try {
@@ -84,7 +84,7 @@ router.post("/orderProduct", auth, async (req, res) => {
   }
 });
 
-router.delete("/delete", auth, async (req, res) => {
+router.delete("/", auth, async (req, res) => {
   const { id } = req.body;
 
   try {

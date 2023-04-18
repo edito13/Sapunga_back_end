@@ -1,11 +1,17 @@
+const Mailgun = require("mailgun.js");
+const formData = require("form-data");
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+const api = require("../../node_modules/clicksend/api.js");
 
 // Importing Database Conection
 import ConnectToDatabase from "../database/conection";
 import { upload } from "../assets/multerConfig";
 import { uploadFile } from "../controllers/upload.controller";
+import auth from "../middleware/auth.middleware";
+import { Telegraf } from "telegraf";
+import User from "../models/user.model";
 
 const app = express();
 const route = express.Router();
@@ -27,6 +33,27 @@ ConnectToDatabase();
 app.use(upload.single("file"));
 
 route.post("/uploads", uploadFile);
+route.post("/sendMessage", auth, async (req, res) => {
+  const { message } = req.body;
+
+  try {
+    const user = await User.findById(req.userId);
+
+    const bot = new Telegraf("6247664565:AAG7EcKWm_Zyn34drKwMsnYPpY2-lqC5_CI");
+    bot.telegram.sendMessage(
+      5142203429,
+      `
+      Usuário: ${user?.name}
+      
+      Mensagem: ${message}
+    `
+    );
+
+    res.send("Mensagem enviada com sucesso.");
+  } catch (error) {
+    res.status(401).send({ error });
+  }
+});
 
 require("../controllers/user.controller")(app);
 require("../controllers/product.controller")(app);

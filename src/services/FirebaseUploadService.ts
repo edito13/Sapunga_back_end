@@ -33,11 +33,13 @@ export class FirebaseUploadService implements UploadProvider {
       await uploadBytes(storageRef, req.file.buffer);
 
       const downloadURL = await getDownloadURL(snapshot.ref);
+      const fullAddress = this.getFullAddress(filename);
+      const viewURL = `${fullAddress}?alt=media`;
 
       return res.send({
         // url: this.getFullAddress(filename),
         filename,
-        url: downloadURL,
+        url: viewURL,
         // storageRef,
       });
     } catch (e: any) {
