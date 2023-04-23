@@ -30,8 +30,6 @@ export class FirebaseUploadService implements UploadProvider {
         metadata
       );
 
-      await uploadBytes(storageRef, req.file.buffer);
-
       const downloadURL = await getDownloadURL(snapshot.ref);
       const fullAddress = this.getFullAddress(filename);
       const viewURL = `${fullAddress}?alt=media`;
@@ -52,6 +50,10 @@ export class FirebaseUploadService implements UploadProvider {
       options: { storageBucket },
     } = firebaseApp;
     // return `https://storage.googleapis.com/${storageBucket}/${filename}?alt=media`;
-    return `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/${filename}`;
+    const fullAddress = `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/${encodeURIComponent(
+      filename
+    )}`;
+
+    return fullAddress;
   }
 }

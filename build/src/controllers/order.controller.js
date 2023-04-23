@@ -69,14 +69,14 @@ router.post("/", auth_middleware_1.default, (req, res) => __awaiter(void 0, void
         const user = yield user_model_1.default.findById(req.userId);
         const ProductItem = yield product_model_1.default.findById(productID);
         const bot = new telegraf_1.Telegraf("6247664565:AAG7EcKWm_Zyn34drKwMsnYPpY2-lqC5_CI");
-        bot.telegram.sendMessage(5142203429, `#### Nova Encomenda ####
-
-    ${user === null || user === void 0 ? void 0 : user.name} com o seguinte endereço de e-mail ${user === null || user === void 0 ? void 0 : user.email}, acabou de encomendar o seguinte produto: ${ProductItem === null || ProductItem === void 0 ? void 0 : ProductItem.name}
-  `);
+        bot.telegram.sendMessage(5142203429, `Nova Encomenda
+      
+      ${user === null || user === void 0 ? void 0 : user.name} com o seguinte endereço de e-mail ${user === null || user === void 0 ? void 0 : user.email}, acabou de encomendar o seguinte produto: ${ProductItem === null || ProductItem === void 0 ? void 0 : ProductItem.name}
+    `);
         res.status(201).json(orders);
     }
     catch (error) {
-        res.status(400).send({ error });
+        res.status(400).send({ error: error });
     }
 }));
 router.delete("/", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -85,7 +85,32 @@ router.delete("/", auth_middleware_1.default, (req, res) => __awaiter(void 0, vo
         const order = yield order_model_1.default.findByIdAndRemove(id);
         if (!order)
             throw "Encomenda não encontrada!";
-        const orders = yield order_model_1.default.find({}).populate(["user", "product"]);
+        const orders = yield order_model_1.default.find({ user: req.userId }).populate([
+            "user",
+            "product",
+        ]);
+        res.json(orders);
+    }
+    catch (error) {
+        res.status(400).send({ error });
+    }
+}));
+router.put("/", auth_middleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id, quantity } = req.body;
+    try {
+        const order = yield order_model_1.default.findById(id);
+        const Quantity = (order === null || order === void 0 ? void 0 : order.quantity) + quantity;
+        console.log("Minha quantidade: " + quantity);
+        console.log("Quantidade do Produto: " + quantity);
+        const UpdateOrderProduct = yield order_model_1.default.findByIdAndUpdate(id, {
+            quantity: Quantity,
+        }, { new: true });
+        if (!UpdateOrderProduct)
+            throw "Erro ao encomendar um produto";
+        const orders = yield order_model_1.default.find({ user: req.userId }).populate([
+            "user",
+            "product",
+        ]);
         res.json(orders);
     }
     catch (error) {

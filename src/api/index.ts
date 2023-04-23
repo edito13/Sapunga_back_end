@@ -30,6 +30,7 @@ ConnectToDatabase();
 app.use(upload.single("file"));
 
 route.post("/uploads", uploadFile);
+
 route.post("/sendMessage", auth, async (req, res) => {
   const { message } = req.body;
 

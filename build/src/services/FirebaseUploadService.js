@@ -30,7 +30,6 @@ class FirebaseUploadService {
                     contentType: req.file.mimetype,
                 };
                 const snapshot = yield (0, storage_1.uploadBytesResumable)(storageRef, req.file.buffer, metadata);
-                yield (0, storage_1.uploadBytes)(storageRef, req.file.buffer);
                 const downloadURL = yield (0, storage_1.getDownloadURL)(snapshot.ref);
                 const fullAddress = this.getFullAddress(filename);
                 const viewURL = `${fullAddress}?alt=media`;
@@ -49,7 +48,8 @@ class FirebaseUploadService {
     getFullAddress(filename) {
         const { options: { storageBucket }, } = firebase_setup_1.firebaseApp;
         // return `https://storage.googleapis.com/${storageBucket}/${filename}?alt=media`;
-        return `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/${filename}`;
+        const fullAddress = `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/${encodeURIComponent(filename)}`;
+        return fullAddress;
     }
 }
 exports.FirebaseUploadService = FirebaseUploadService;

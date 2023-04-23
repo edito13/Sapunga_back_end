@@ -26,7 +26,7 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             throw "Já existe um usuário com este e-mail.";
         // If it´s all ok
         const salt = yield bcrypt_1.default.genSalt(12);
-        const passwordCrypted = yield bcrypt_1.default.hash(password, salt);
+        const passwordCrypted = yield bcrypt_1.default.hash(password || "1234", salt);
         const userRegisted = yield user_model_1.default.create({
             name,
             email,

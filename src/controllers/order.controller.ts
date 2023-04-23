@@ -72,15 +72,15 @@ router.post("/", auth, async (req, res) => {
     const bot = new Telegraf("6247664565:AAG7EcKWm_Zyn34drKwMsnYPpY2-lqC5_CI");
     bot.telegram.sendMessage(
       5142203429,
-      `#### Nova Encomenda ####
-
-    ${user?.name} com o seguinte endereço de e-mail ${user?.email}, acabou de encomendar o seguinte produto: ${ProductItem?.name}
-  `
+      `Nova Encomenda
+      
+      ${user?.name} com o seguinte endereço de e-mail ${user?.email}, acabou de encomendar o seguinte produto: ${ProductItem?.name}
+    `
     );
 
     res.status(201).json(orders);
   } catch (error) {
-    res.status(400).send({ error });
+    res.status(400).send({ error: error as string });
   }
 });
 
@@ -92,7 +92,42 @@ router.delete("/", auth, async (req, res) => {
 
     if (!order) throw "Encomenda não encontrada!";
 
-    const orders = await Order.find({}).populate(["user", "product"]);
+    const orders = await Order.find({ user: req.userId }).populate([
+      "user",
+      "product",
+    ]);
+
+    res.json(orders);
+  } catch (error) {
+    res.status(400).send({ error });
+  }
+});
+
+router.put("/", auth, async (req, res) => {
+  const { id, quantity } = req.body;
+
+  try {
+    const order = await Order.findById(id);
+
+    const Quantity = order?.quantity + quantity;
+
+    console.log("Minha quantidade: " + quantity);
+    console.log("Quantidade do Produto: " + quantity);
+
+    const UpdateOrderProduct = await Order.findByIdAndUpdate(
+      id,
+      {
+        quantity: Quantity,
+      },
+      { new: true }
+    );
+
+    if (!UpdateOrderProduct) throw "Erro ao encomendar um produto";
+
+    const orders = await Order.find({ user: req.userId }).populate([
+      "user",
+      "product",
+    ]);
 
     res.json(orders);
   } catch (error) {
