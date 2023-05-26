@@ -1,18 +1,20 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+import { Telegraf } from "telegraf";
 
 // Importing Database Conection
 import ConnectToDatabase from "../database/conection";
+
+// Importing other files
+import User from "../models/user.model";
+import auth from "../middleware/auth.middleware";
 import { upload } from "../assets/multerConfig";
 import { uploadFile } from "../controllers/upload.controller";
-import auth from "../middleware/auth.middleware";
-import { Telegraf } from "telegraf";
-import User from "../models/user.model";
 
 const app = express();
 const route = express.Router();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Let JSON for the request
 app.use(express.json());
@@ -62,6 +64,4 @@ require("../controllers/admin.controller")(app);
 
 app.use(route);
 
-app.listen(process.env.PORT || PORT, () =>
-  console.log(`Servidor rodando na porta ${PORT}`)
-);
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));

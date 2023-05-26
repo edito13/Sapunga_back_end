@@ -4,7 +4,6 @@ import {
   ref as StorageRef,
   UploadMetadata,
   uploadBytesResumable,
-  uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
 import { UploadProvider } from "./interfaces/UploadProvider";
@@ -35,10 +34,8 @@ export class FirebaseUploadService implements UploadProvider {
       const viewURL = `${fullAddress}?alt=media`;
 
       return res.send({
-        // url: this.getFullAddress(filename),
         filename,
         url: viewURL,
-        // storageRef,
       });
     } catch (e: any) {
       return res.status(400).send({ status: "error", message: e.message });
@@ -49,7 +46,6 @@ export class FirebaseUploadService implements UploadProvider {
     const {
       options: { storageBucket },
     } = firebaseApp;
-    // return `https://storage.googleapis.com/${storageBucket}/${filename}?alt=media`;
     const fullAddress = `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/${encodeURIComponent(
       filename
     )}`;

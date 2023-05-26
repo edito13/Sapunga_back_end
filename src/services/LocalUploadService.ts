@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { UploadProvider } from "./interfaces/UploadProvider";
 import fs from "node:fs";
 import path from "node:path";
 import { v4 } from "uuid";
 import { promisify } from "node:util";
+import { UploadProvider } from "./interfaces/UploadProvider";
 
 const UPLOAD_FOLDER = "uploads";
 
@@ -38,7 +38,7 @@ export class LocalUploadService implements UploadProvider {
     }
   }
   getFullAddress(filename: string) {
-    // the server address must be before that
+    // the server address has to came before this adress
     return `/images/${filename}`;
   }
 }
