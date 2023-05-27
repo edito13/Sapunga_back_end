@@ -1,7 +1,6 @@
 import express from "express";
 import Category from "../models/category.model";
 import Product from "../models/product.model";
-import { ProductCategoryI } from "../types";
 
 const router = express.Router();
 
@@ -96,6 +95,32 @@ router.delete("/", async (req, res) => {
     const Products = await Product.find({}).populate("category");
 
     res.json(Products);
+  } catch (error) {
+    res.status(400).send({ error });
+  }
+});
+
+router.put("/", async (req, res) => {
+  const { id, name, describe, price, urlPhoto, categoryID } = req.body;
+
+  try {
+    const product = await Product.findByIdAndUpdate(
+      id,
+      {
+        name,
+        describe,
+        price,
+        urlPhoto,
+        categoryID,
+      },
+      { new: true }
+    );
+
+    if (!product) throw "Erro ao editar o produto!";
+
+    // const Products = await Product.find({}).populate("category");
+
+    res.json(product);
   } catch (error) {
     res.status(400).send({ error });
   }

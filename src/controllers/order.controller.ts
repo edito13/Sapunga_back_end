@@ -1,8 +1,8 @@
 import express from "express";
+import { Telegraf } from "telegraf";
 import auth from "../middleware/auth.middleware";
 import Order from "../models/order.model";
 import Product from "../models/product.model";
-import { Telegraf } from "telegraf";
 import User from "../models/user.model";
 
 const router = express.Router();
@@ -29,24 +29,6 @@ router.get("/ordersUser", auth, async (req, res) => {
     res.status(400).send({ error });
   }
 });
-
-// route.post("/sms", (req, res) => {
-//   const { name, phoneNumber, message } = req.body;
-
-//   const bot = new Telegraf("6247664565:AAG7EcKWm_Zyn34drKwMsnYPpY2-lqC5_CI");
-//   bot.telegram.sendMessage(
-//     5142203429,
-//     `
-//     ${name} com o seguinte número ${phoneNumber}, acabou de mandar a seguinte mensagem: ${message}
-//   `
-//   );
-//   res.send("Mensagem foi enviada com sucesso!");
-//   // bot.start((ctx) => ctx.reply("Welcome"));
-//   // bot.help((ctx) => ctx.reply("Send me a sticker"));
-//   // bot.on(message("sticker"), (ctx) => ctx.reply("👍"));
-//   // bot.hears("hi", (ctx) => ctx.reply("Hey there"));
-//   // bot.launch();
-// });
 
 router.post("/", auth, async (req, res) => {
   const { productID, quantity } = req.body;
@@ -110,9 +92,6 @@ router.put("/", auth, async (req, res) => {
     const order = await Order.findById(id);
 
     const Quantity = order?.quantity + quantity;
-
-    console.log("Minha quantidade: " + quantity);
-    console.log("Quantidade do Produto: " + quantity);
 
     const UpdateOrderProduct = await Order.findByIdAndUpdate(
       id,
