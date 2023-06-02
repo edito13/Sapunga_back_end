@@ -41,7 +41,7 @@ class LocalUploadService {
         });
     }
     getFullAddress(filename) {
-        // the server address must be before that
+        // the server address has to came before this adress
         return `/images/${filename}`;
     }
 }

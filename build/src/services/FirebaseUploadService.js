@@ -34,10 +34,8 @@ class FirebaseUploadService {
                 const fullAddress = this.getFullAddress(filename);
                 const viewURL = `${fullAddress}?alt=media`;
                 return res.send({
-                    // url: this.getFullAddress(filename),
                     filename,
                     url: viewURL,
-                    // storageRef,
                 });
             }
             catch (e) {
@@ -47,7 +45,6 @@ class FirebaseUploadService {
     }
     getFullAddress(filename) {
         const { options: { storageBucket }, } = firebase_setup_1.firebaseApp;
-        // return `https://storage.googleapis.com/${storageBucket}/${filename}?alt=media`;
         const fullAddress = `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/${encodeURIComponent(filename)}`;
         return fullAddress;
     }

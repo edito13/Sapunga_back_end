@@ -15,13 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
+const telegraf_1 = require("telegraf");
 // Importing Database Conection
 const conection_1 = __importDefault(require("../database/conection"));
+// Importing other files
+const user_model_1 = __importDefault(require("../models/user.model"));
+const auth_middleware_1 = __importDefault(require("../middleware/auth.middleware"));
 const multerConfig_1 = require("../assets/multerConfig");
 const upload_controller_1 = require("../controllers/upload.controller");
-const auth_middleware_1 = __importDefault(require("../middleware/auth.middleware"));
-const telegraf_1 = require("telegraf");
-const user_model_1 = __importDefault(require("../models/user.model"));
 const app = (0, express_1.default)();
 const route = express_1.default.Router();
 const PORT = 3000;

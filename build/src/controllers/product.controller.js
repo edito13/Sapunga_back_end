@@ -106,4 +106,23 @@ router.delete("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(400).send({ error });
     }
 }));
+router.put("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id, name, describe, price, urlPhoto, categoryID } = req.body;
+    try {
+        const product = yield product_model_1.default.findByIdAndUpdate(id, {
+            name,
+            describe,
+            price,
+            urlPhoto,
+            categoryID,
+        }, { new: true });
+        if (!product)
+            throw "Erro ao editar o produto!";
+        // const Products = await Product.find({}).populate("category");
+        res.json(product);
+    }
+    catch (error) {
+        res.status(400).send({ error });
+    }
+}));
 module.exports = (app) => app.use("/product", router);
