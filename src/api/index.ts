@@ -14,7 +14,7 @@ import { uploadFile } from "../controllers/upload.controller";
 
 const app = express();
 const route = express.Router();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 // Let JSON for the request
 app.use(express.json());
@@ -64,4 +64,6 @@ require("../controllers/admin.controller")(app);
 
 app.use(route);
 
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+app.listen(process.env.PORT || PORT, () =>
+  console.log(`Servidor rodando na porta ${PORT}`)
+);
