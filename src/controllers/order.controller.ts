@@ -53,6 +53,13 @@ router.post("/", auth, async (req, res) => {
 
     const bot = new Telegraf("6247664565:AAG7EcKWm_Zyn34drKwMsnYPpY2-lqC5_CI");
     bot.telegram.sendMessage(
+      6280552591,
+      `Nova Encomenda
+      
+      ${user?.name} com o seguinte endereço de e-mail ${user?.email}, acabou de encomendar o seguinte produto: ${ProductItem?.name}
+    `
+    );
+    bot.telegram.sendMessage(
       5142203429,
       `Nova Encomenda
       

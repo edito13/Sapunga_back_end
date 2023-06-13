@@ -41,7 +41,7 @@ route.post("/sendMessage", auth, async (req, res) => {
 
     const bot = new Telegraf("6247664565:AAG7EcKWm_Zyn34drKwMsnYPpY2-lqC5_CI");
     bot.telegram.sendMessage(
-      5142203429,
+      6280552591,
       `
       Usuário: ${user?.name}
       

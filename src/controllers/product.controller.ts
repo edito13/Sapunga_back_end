@@ -118,9 +118,9 @@ router.put("/", async (req, res) => {
 
     if (!product) throw "Erro ao editar o produto!";
 
-    // const Products = await Product.find({}).populate("category");
+    const Products = await Product.find({}).populate("category");
 
-    res.json(product);
+    res.json(Products);
   } catch (error) {
     res.status(400).send({ error });
   }
